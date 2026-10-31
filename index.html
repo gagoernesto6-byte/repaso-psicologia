@@ -92,6 +92,7 @@ textarea { width: 100%; min-height: 110px; font: 15px var(--f-ui); padding: 8px;
 .total { font-family: var(--f-lectura); font-size: 30px; font-weight: 700 }
 footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px }
 @media (prefers-reduced-motion: no-preference) { .btn, .tabs button, .op { transition: background-color .15s, border-color .15s } }
+.pod audio { width: 100%; margin-top: 4px }
 </style>
 </head>
 <body>
@@ -109,6 +110,7 @@ footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px }
     <button type="button" role="tab" data-t="pareo" aria-selected="false">Pareo</button>
     <button type="button" role="tab" data-t="desarrollo" aria-selected="false">Desarrollo</button>
     <button type="button" role="tab" data-t="simulacro" aria-selected="false">Simulacro</button>
+    <button type="button" role="tab" data-t="podcasts" aria-selected="false">🎧 Podcasts</button>
   </nav>
 
   <section id="tarjetas" role="tabpanel" aria-label="Tarjetas">
@@ -162,6 +164,20 @@ footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px }
       <div id="m-preg" style="display:grid;gap:10px;margin-top:10px"></div>
     </div>
     <div id="m-result" hidden style="display:grid;gap:10px"></div>
+  </section>
+
+  <section id="podcasts" role="tabpanel" aria-label="Podcasts" hidden>
+    <div class="card">
+      <p class="q">🎧 Chisme Psicológico</p>
+      <p style="margin:0">Cada tema contado como un chisme entre dos amigas, Vale y Majo: en simple, con trucos para recordar y una ronda de preguntas al final. Sirve para repasar caminando, en el carro o antes de dormir. Las voces están hechas con IA.</p>
+    </div>
+    <div class="card pod"><p class="q">Tema 1 · Posturas ontológicas y epistemológicas <span class="nota">· 10:38</span></p><audio controls preload="none" src="podcasts/Chisme%20Psicologico%20-%20Tema%201%20-%20Posturas%20ontologicas%20y%20epistemologicas.mp3"></audio></div>
+    <div class="card pod"><p class="q">Tema 2 · Conductismo y neoconductismo <span class="nota">· 9:41</span></p><audio controls preload="none" src="podcasts/Chisme%20Psicologico%20-%20Tema%202%20-%20Conductismo%20y%20neoconductismo.mp3"></audio></div>
+    <div class="card pod"><p class="q">Tema 3 · Psicoanálisis <span class="nota">· 8:57</span></p><audio controls preload="none" src="podcasts/Chisme%20Psicologico%20-%20Tema%203%20-%20Psicoanalisis.mp3"></audio></div>
+    <div class="card pod"><p class="q">Tema 4 · Gestalt <span class="nota">· 7:53</span></p><audio controls preload="none" src="podcasts/Chisme%20Psicologico%20-%20Tema%204%20-%20Gestalt.mp3"></audio></div>
+    <div class="card pod"><p class="q">Tema 5 · Psicología humanista <span class="nota">· 8:30</span></p><audio controls preload="none" src="podcasts/Chisme%20Psicologico%20-%20Tema%205%20-%20Psicologia%20humanista.mp3"></audio></div>
+    <div class="card pod"><p class="q">Tema 6 · Psicología cognitiva y constructivismo <span class="nota">· 9:03</span></p><audio controls preload="none" src="podcasts/Chisme%20Psicologico%20-%20Tema%206%20-%20Psicologia%20cognitiva%20y%20constructivismo.mp3"></audio></div>
+    <p class="nota">El podcast es para repasar. En el examen, lo que manda es cómo lo dice la lámina (📑).</p>
   </section>
 
   <footer>
