@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Repaso Psicología Parcial 3</title>
+<style>
+/* Layout: una columna de estudio (máx. 46rem); pestañas como separadores; fichas de papel con tinta ciruela y resaltador para lo que viene de la lámina */
+:root {
+  --bg: #F1EFF4; --card: #FFFFFF; --ink: #1D1A26; --muted: #5E5A6B; --line: #DCD7E3;
+  --acc: #6B3FA0; --acc-ink: #FFFFFF; --acc-soft: #EEE6F8;
+  --hl: #FBE7A1; --hl-ink: #5C4300; --lib: #DDEFE8; --lib-ink: #1F5C47;
+  --ok: #1E8A5A; --ok-soft: #DDF2E7; --bad: #C93C3C; --bad-soft: #F9E1E1;
+  --f-ui: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-lectura: "Literata", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131118; --card: #1C1924; --ink: #ECE8F3; --muted: #A59FB3; --line: #2E2939;
+    --acc: #B48CF0; --acc-ink: #1A1026; --acc-soft: #2A2140; --hl: #4A3D10; --hl-ink: #F6E3A2; --lib: #173328; --lib-ink: #9FE0C5;
+    --ok: #45C48C; --ok-soft: #15301F; --bad: #F07A7A; --bad-soft: #3A1D21; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131118; --card: #1C1924; --ink: #ECE8F3; --muted: #A59FB3; --line: #2E2939;
+  --acc: #B48CF0; --acc-ink: #1A1026; --acc-soft: #2A2140; --hl: #4A3D10; --hl-ink: #F6E3A2; --lib: #173328; --lib-ink: #9FE0C5;
+  --ok: #45C48C; --ok-soft: #15301F; --bad: #F07A7A; --bad-soft: #3A1D21; color-scheme: dark;
+}
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px) }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 16px; line-height: 1.5 }
+.app { max-width: 46rem; margin: 0 auto; padding-block: 16px 64px; padding-inline: 16px; display: grid; gap: 12px }
+.app > * { min-width: 0 }
+header { display: grid; gap: 4px }
+h1 { font-family: var(--f-lectura); font-size: 27px; line-height: 1.2; margin: 0; text-wrap: balance }
+h2 { font-size: 15px; margin: 0 0 8px; text-wrap: balance }
+.sub { color: var(--muted); font-size: 14px; margin: 0 }
+.cuenta { justify-self: start; font-size: 13px; font-weight: 600; color: var(--acc); background: var(--acc-soft); border-radius: 99px; padding: 3px 10px; font-variant-numeric: tabular-nums }
+.tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line); padding-bottom: 8px }
+.tabs button { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 8px; padding: 8px 13px; font: 600 14px var(--f-ui); cursor: pointer }
+.tabs button[aria-selected="true"] { background: var(--acc); border-color: var(--acc); color: var(--acc-ink) }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, .flip:focus-visible { outline: 3px solid var(--acc); outline-offset: 2px }
+section { display: grid; gap: 10px }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0 }
+.fila { display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.btn { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 8px; padding: 9px 14px; font: 500 15px var(--f-ui); cursor: pointer }
+.btn.prim { background: var(--acc); border-color: var(--acc); color: var(--acc-ink) }
+.btn.ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok) }
+.btn.bad { background: var(--bad-soft); border-color: var(--bad); color: var(--bad) }
+select { font: 500 15px var(--f-ui); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); max-width: 100% }
+label.nota { display: inline-flex; gap: 6px; align-items: center }
+.flip { min-height: 220px; display: grid; place-items: center; text-align: center; cursor: pointer; user-select: none }
+.cara { display: grid; gap: 10px; justify-items: center; max-width: 34rem }
+.termino { font-family: var(--f-lectura); font-size: 26px; font-weight: 700; line-height: 1.25; text-wrap: balance }
+.termino.chico { font-size: 18px }
+.def { font-family: var(--f-lectura); font-size: 17px; line-height: 1.55; text-align: left }
+.pista, .vacio { color: var(--muted); font-size: 13px }
+.tema { font-size: 12px; color: var(--acc); text-transform: uppercase; letter-spacing: .06em; font-weight: 700 }
+.chip { display: inline-block; font: 700 11px/1.7 var(--f-ui); letter-spacing: .05em; text-transform: uppercase; padding: 0 6px; border-radius: 4px; margin-right: 5px; vertical-align: 2px }
+.chip.lam { background: var(--hl); color: var(--hl-ink) }
+.chip.lib { background: var(--lib); color: var(--lib-ink) }
+.chip.ext { border: 1px solid var(--line); color: var(--muted) }
+.chip.okc { background: var(--ok-soft); color: var(--ok) }
+.chip.badc { background: var(--bad-soft); color: var(--bad) }
+.q { font-weight: 600; margin: 4px 0 10px; display: block }
+.a { background: var(--acc-soft); border-radius: 8px; padding: 10px 12px; margin: 8px 0; font-family: var(--f-lectura); line-height: 1.55 }
+.nota { font-size: 13px; color: var(--muted); margin: 0 }
+.barra { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden } .barra i { display: block; height: 100%; background: var(--ok); width: 0 }
+.opciones { display: grid; gap: 6px }
+.op { text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 8px; padding: 9px 12px; font: 15px/1.4 var(--f-ui); cursor: pointer; display: flex; gap: 8px }
+.op b { flex: none }
+.op.bien { background: var(--ok-soft); border-color: var(--ok) }
+.op.mal { background: var(--bad-soft); border-color: var(--bad) }
+.op[aria-pressed="true"] { border-color: var(--acc); box-shadow: inset 0 0 0 1px var(--acc) }
+.res-ok { color: var(--ok); font-weight: 700 } .res-bad { color: var(--bad); font-weight: 700 }
+.vf { display: flex; gap: 8px }
+.vf .btn { min-width: 64px }
+.pareo { display: grid; gap: 8px }
+.pareo .fila-p { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 8px }
+.pareo .fila-p.bien { background: var(--ok-soft); border-radius: 6px; padding: 6px }
+.pareo .fila-p.mal { background: var(--bad-soft); border-radius: 6px; padding: 6px }
+.lista-terminos { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px 12px; font-size: 15px }
+.reloj { font-variant-numeric: tabular-nums; font-size: 22px; font-weight: 700; margin: 0 }
+textarea { width: 100%; min-height: 110px; font: 15px var(--f-ui); padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink) }
+.parte { font-family: var(--f-lectura); font-size: 18px; font-weight: 700; margin: 6px 0 0 }
+.total { font-family: var(--f-lectura); font-size: 30px; font-weight: 700 }
+footer { color: var(--muted); font-size: 13px; display: grid; gap: 4px }
+@media (prefers-reduced-motion: no-preference) { .btn, .tabs button, .op { transition: background-color .15s, border-color .15s } }
+.pod audio { width: 100%; margin-top: 4px }
+
+header { padding: 25px clamp(17px, 4vw, 30px); border: 1px solid var(--line); border-radius: 17px;
+  background: var(--card); box-shadow: inset 0 4px var(--acc); gap: 7px; }
+header h1 { font-size: clamp(26px, 4.8vw, 39px); letter-spacing: -.035em; }
+header .sub { font-size: 16px; max-width: 54ch; }
+.app { max-width: 52rem; padding-block-start: clamp(12px, 3vw, 32px); }
+.tabs { flex-wrap: wrap; overflow: visible; row-gap: 6px; }
+.tabs button { min-height: 42px; }
+.card h2 { margin-top: 0; font-size: 22px; }
+.card h3 { margin: 16px 0 4px; font-size: 17px; }
+.card p { overflow-wrap: break-word; }
+.a { white-space: pre-line; }
+.card input[type=text] { min-width: 8rem; max-width: 100%; padding: 9px 12px; border: 1px solid var(--line);
+  border-radius: 8px; color: var(--ink); background: var(--bg); font: 16px var(--f-ui); }
+.plan-list { display: grid; gap: 7px; padding-left: 1.5rem; }
+.card details { margin-block: 11px; }
+.card summary { cursor: pointer; font-weight: 650; }
+.ej-data { display: grid; gap: 6px; }
+@media (max-width: 430px) {
+  .app { padding-inline: 12px; }
+  .tabs button { padding-inline: 10px; }
+  .card { padding: 13px; }
+  .lista-terminos { grid-template-columns: 1fr; }
+}
+:root { --acc: #5936a0; --acc-ink: #fff; --acc-soft: #eee7fc; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme=light]) {
+  --acc: #ba9cff; --acc-ink: #211638; --acc-soft: #35284d;
+}}
+.study-start { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 2px }
+.areas-sencillas { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(225px,100%),1fr)); gap:10px; margin:10px 0 }
+.areas-sencillas > div { border:1px solid currentColor; border-radius:12px; padding:12px }
+.areas-sencillas p { margin-bottom:0 }
+#sencillo .card + .card, #plan .card + .card { margin-top:12px }
+#sencillo p, #sencillo li, #plan p { font-size:1rem; line-height:1.55 }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Repaso de Psicología · Parcial 3</h1>
+    <p class="sub">Método científico, investigación, ética profesional y áreas de la psicología.</p>
+    <span class="cuenta" id="cuenta"></span>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button type="button" role="tab" data-t="plan" aria-selected="true">Empieza aquí</button>
+    <button type="button" role="tab" data-t="sencillo" aria-selected="false">En sencillo</button>
+    <button type="button" role="tab" data-t="tarjetas" aria-selected="false">Tarjetas</button>
+    <button type="button" role="tab" data-t="seleccion" aria-selected="false">Selección</button>
+    <button type="button" role="tab" data-t="vf" aria-selected="false">V o F</button>
+    <button type="button" role="tab" data-t="pareo" aria-selected="false">Pareo</button>
+    <button type="button" role="tab" data-t="desarrollo" aria-selected="false">Desarrollo</button>
+    <button type="button" role="tab" data-t="casos" aria-selected="false">Casos de ética</button>
+    <button type="button" role="tab" data-t="simulacro" aria-selected="false">Simulacro</button>
+  </nav>
+
+  <section id="tarjetas" role="tabpanel" aria-label="Tarjetas" hidden>
+    <div class="card fila">
+      <label for="f-tema" class="nota">Tema</label><select id="f-tema"></select>
+      <label class="nota" for="f-pend"><input type="checkbox" id="f-pend"> solo las que no domino</label>
+    </div>
+    <div class="card flip" id="tarjeta" tabindex="0" role="button" aria-label="Tarjeta: toca para ver la respuesta"></div>
+    <div class="fila"><button type="button" class="btn bad" id="t-no">No lo sabía</button><button type="button" class="btn ok" id="t-si">Lo sabía</button><button type="button" class="btn" id="t-sig">Saltar</button></div>
+    <div class="barra" aria-hidden="true"><i id="t-barra"></i></div>
+    <p class="nota" id="t-prog"></p>
+  </section>
+
+  <section id="seleccion" role="tabpanel" aria-label="Selección simple" hidden>
+    <div class="card fila"><label for="s-tema-f" class="nota">Tema</label><select id="s-tema-f"></select>
+      <label class="nota" for="s-pend"><input type="checkbox" id="s-pend"> solo las que fallé o no hice</label></div>
+    <p class="nota">Cada pregunta tiene una sola opción correcta. Toca la que creas y verás si acertaste y por qué.</p>
+    <p class="nota" id="s-prog"></p>
+    <div id="s-lista" style="display:grid;gap:10px"></div>
+  </section>
+
+  <section id="vf" role="tabpanel" aria-label="Verdadero o falso" hidden>
+    <div class="card fila"><label for="v-tema-f" class="nota">Tema</label><select id="v-tema-f"></select>
+      <label class="nota" for="v-pend"><input type="checkbox" id="v-pend"> solo las que fallé o no hice</label></div>
+    <p class="nota">Busca el detalle cambiado: un autor, un orden o un concepto al revés.</p>
+    <p class="nota" id="v-prog"></p>
+    <div id="v-lista" style="display:grid;gap:10px"></div>
+  </section>
+
+  <section id="pareo" role="tabpanel" aria-label="Pareo" hidden>
+    <div class="card fila"><label for="p-set" class="nota">Pareo</label><select id="p-set"></select><button type="button" class="btn" id="p-otro">Mezclar de nuevo</button></div>
+    <div class="card" id="p-caja"></div>
+  </section>
+
+  <section id="desarrollo" role="tabpanel" aria-label="Desarrollo" hidden>
+    <div class="card fila"><label for="d-tema-f" class="nota">Tema</label><select id="d-tema-f"></select></div>
+    <p class="nota">Escribe tu respuesta (mínimo 8 líneas: definición, explicación, ejemplo y autor). Después abre la respuesta modelo y compara.</p>
+    <div id="d-lista" style="display:grid;gap:10px"></div>
+  </section>
+
+  <section id="plan" role="tabpanel" aria-label="Empieza aquí">
+<article class="card">
+  <h2>Qué estudiar para el 25 de noviembre</h2>
+  <p>Lee las explicaciones, prueba recordar las ideas sin mirar y corrige con las respuestas. Antes del parcial, haz el simulacro.</p>
+  <div class="study-start">
+    <button type="button" class="btn prim" data-study-start="sencillo">Leer en sencillo</button>
+    <button type="button" class="btn" data-study-start="casos">Practicar casos</button>
+  </div>
+  <p>El cronograma de Introducción a la Psicología fija la actividad de casos éticos el lunes 23 y el parcial escrito de las unidades III y IV el miércoles 25 de noviembre. Organiza los cuatro temas según el cronograma.</p>
+  <ol class="plan-list">
+    <li><strong>T1 · Método científico.</strong> Popper y falsabilidad, hipótesis, operacionalización, correlación, variables y control.</li>
+    <li><strong>T2 · Enfoques y métodos.</strong> Cuantitativo, cualitativo, instrumentos, descripción, correlación y estudio de caso.</li>
+    <li><strong>T3 · Ética profesional.</strong> Consentimiento, retiro, riesgos, anonimato de respuestas, secreto y comunicación de resultados. Prioriza aplicar los principios a un caso.</li>
+    <li><strong>T4 · Áreas.</strong> Distingue clínica, social, educativa y organizacional. Repasa también desarrollo, deporte y áreas de vanguardia.</li>
+  </ol>
+</article>
+<article class="card">
+  <h2>Plan hasta el parcial</h2>
+  <ol class="plan-list">
+    <li><strong>Sábado 21.</strong> Método científico y métodos de investigación en dos bloques.</li>
+    <li><strong>Domingo 22.</strong> Ética y dos casos aplicados antes de la actividad del lunes.</li>
+    <li><strong>Lunes 23.</strong> Áreas de la psicología. Responde un caso por cada una de las cuatro áreas enfatizadas.</li>
+    <li><strong>Martes 24.</strong> Simulacro, corrección de errores y solo tarjetas pendientes al final.</li>
+    <li><strong>Miércoles 25.</strong> Repaso breve de definiciones y diferencias. Prioriza lo que fallaste.</li>
+  </ol>
+  <p>Bloques de 50 minutos con 10 de descanso. Practica caso por caso y corrige con la respuesta modelo.</p>
+</article>
+<article class="card">
+  <h2>Lecturas del cronograma</h2>
+  <p>La práctica cubre los cuatro temas de las unidades III y IV con el material de clase disponible. Para completar la bibliografía, consulta Feldman (capítulo 1, módulo 3), Hernández y colaboradores (capítulos 1 y 2, sugeridos), los materiales de ética y disciplina de la Unimet y los videos en Moodle.</p>
+</article>
+  </section>
+<section id="sencillo" role="tabpanel" aria-label="En sencillo" hidden>
+  <article class="card">
+    <h2>1. ¿Cómo investiga la psicología?</h2>
+    <p>El método científico pone una idea a prueba con datos. Empieza por una pregunta, formula una hipótesis, decide cómo medir cada variable, recoge datos, analízalos y comunica qué encontraste y qué límites tuvo el estudio.</p>
+    <p><strong>Ejemplo.</strong> “Quienes duermen ocho horas recuerdan más palabras que quienes duermen seis”. Se puede poner a prueba. Define cómo medirás las horas de sueño y la memoria. Eso es <strong>operacionalizar</strong>.</p>
+    <p>Para Popper, una hipótesis es <strong>falsable</strong> si existe una observación que podría refutarla. Si solo mides sueño y memoria, puedes encontrar una relación. Para investigar una causa, necesitas un diseño que controle explicaciones alternativas.</p>
+    <details><summary>Comprueba si lo entendiste</summary><p>¿Cómo medirías la memoria en ese estudio? Una opción es contar cuántas palabras de una lista recuerda cada persona tras cinco minutos, en las mismas condiciones.</p></details>
+  </article>
+  <article class="card">
+    <h2>2. ¿Qué método elegirías?</h2>
+    <p><strong>Cuantitativo</strong> mide y compara números, como horas de sueño o puntuaciones. <strong>Cualitativo</strong> estudia experiencias y significados, por ejemplo con entrevistas. La fenomenología describe la experiencia vivida y la hermenéutica interpreta su sentido en contexto.</p>
+    <ul class="plan-list">
+      <li><strong>Descriptivo.</strong> ¿Cuántas horas duermen los estudiantes?</li>
+      <li><strong>Correlacional.</strong> ¿Dormir más se relaciona con recordar más palabras?</li>
+      <li><strong>Experimental.</strong> ¿Cambiar las condiciones de descanso afecta la memoria? Identifica qué se manipula, qué se mide y qué se mantiene constante.</li>
+      <li><strong>Estudio de caso.</strong> ¿Qué se observa al seguir con detalle a una persona, un grupo o una situación?</li>
+    </ul>
+    <details><summary>Comprueba si lo entendiste</summary><p>Entrevistas a estudiantes sobre cómo viven los exámenes. ¿Qué enfoque usarías? Cualitativo. Si quieres entender cómo experimentan la presión, una opción es un enfoque fenomenológico.</p></details>
+  </article>
+  <article class="card">
+    <h2>3. Ética profesional en palabras simples</h2>
+    <p>Para resolver un caso, identifica qué persona puede verse afectada, qué deber está en juego y qué harías primero. Usa los artículos como referencia para justificar tu respuesta.</p>
+    <ul class="plan-list">
+      <li><strong>Investigar con personas.</strong> El equipo debe estar capacitado. Hay que evaluar necesidad y riesgos, explicar la participación, respetar la decisión de participar o retirarse y proteger las respuestas. Comunica los hallazgos aunque contradigan tu hipótesis y reconoce la contribución real de cada persona. Arts. 55, 57, 59, 60, 62 y 70.</li>
+      <li><strong>Investigar con animales.</strong> Justifica el estudio y reduce el sufrimiento. Como apoyo para recordarlo, usa las 3R: reemplazar cuando se pueda, reducir el número de animales y refinar el procedimiento.</li>
+      <li><strong>Atender y comunicar.</strong> Trabaja dentro de tu competencia, deriva cuando haga falta y explica los resultados con claridad. El secreto profesional continúa después de la atención. Ante una posible excepción, identifica el supuesto del Código y limita la comunicación a lo pertinente. Arts. 142–145.</li>
+      <li><strong>Ejercer la profesión.</strong> En consulta, docencia, comunicación pública e instituciones, responde por tu trabajo, respeta el trato con colegas, acuerda los honorarios con claridad y evita prometer resultados. El Código también aborda la relación con el gremio y cómo se procesan las faltas.</li>
+    </ul>
+    <details><summary>Comprueba si lo entendiste</summary><p>Un equipo quiere borrar resultados que contradicen su hipótesis. ¿Qué harías? Conservaría y explicaría esos resultados, cuidando la identidad de quienes participaron. El art. 62 aplica al desacuerdo con los hallazgos.</p></details>
+  </article>
+  <article class="card">
+    <h2>4. ¿Qué área corresponde a cada caso?</h2>
+    <p>Fíjate en qué problema quieren resolver.</p>
+    <div class="areas-sencillas">
+      <div><strong>Clínica</strong><p>Evalúa e interviene frente al malestar psicológico. Ejemplo: atiende a una estudiante por ataques de pánico.</p></div>
+      <div><strong>Social</strong><p>Estudia cómo otras personas, grupos y normas influyen en la conducta. Ejemplo: analiza por qué un grupo presiona a sus miembros para que callen.</p></div>
+      <div><strong>Educativa</strong><p>Apoya el aprendizaje y la enseñanza. Ejemplo: adapta actividades para que una estudiante con dificultades de lectura pueda aprender.</p></div>
+      <div><strong>Organizacional</strong><p>Estudia la conducta en el trabajo. Ejemplo: mejora la coordinación y el clima de un equipo en una empresa.</p></div>
+    </div>
+    <details><summary>Otras áreas del cronograma</summary><p><strong>Salud</strong> estudia hábitos y procesos ligados al bienestar y la enfermedad. <strong>Desarrollo</strong> estudia los cambios a lo largo de la vida. <strong>Deporte</strong> trabaja aspectos psicológicos de la práctica deportiva. <strong>Forense o judicial</strong> aporta evaluación a preguntas jurídicas. <strong>Neuropsicología</strong> estudia la relación entre cerebro y conducta. La realidad virtual puede ser una herramienta de evaluación, investigación o intervención. El bienestar estudia condiciones que ayudan a las personas a funcionar y vivir mejor.</p></details>
+    <details><summary>Comprueba si lo entendiste</summary><p>En una escuela, alguien investiga si la presión del grupo explica que nadie denuncie burlas. Es psicología social por la pregunta sobre el grupo. Si la tarea es diseñar apoyos para el aprendizaje, corresponde a psicología educativa.</p></details>
+  </article>
+</section>
+  <section id="casos" role="tabpanel" aria-label="Casos de ética" hidden>
+<article class="card">
+  <h2>Casos de ética</h2>
+  <p>Para la actividad del lunes 23. 1. Identifica el dilema. 2. Nombra el principio. 3. Aplícalo a los hechos. 4. Propón un paso concreto y justifica por qué.</p>
+</article>
+<article class="card"><h2>Resuelto · Participación bajo presión</h2>
+  <p>En un estudio de estrés se pide el correo junto a cada respuesta y se advierte que retirarse bajará la nota.</p>
+  <p>El art. 57 protege la aceptación libre y el retiro. Quita la penalización y ofrece una alternativa equivalente. El art. 60 protege el anonimato de respuestas. Evita identificadores innecesarios. Si hace falta seguimiento, separa contactos y respuestas, controla el acceso y explica el tratamiento.</p>
+</article>
+<article class="card"><h2>Practica · Publicación de entrevistas</h2>
+  <p>Tu equipo quiere publicar capturas con información que permite reconocer a participantes. También quiere borrar resultados que contradicen la hipótesis. Identifica dos principios y una solución para cada problema.</p>
+  <label for="psi-caso">Escribe tu respuesta</label><textarea id="psi-caso"></textarea>
+  <details><summary>Ver respuesta modelo</summary><p>Aplica el art. 60 a la protección de respuestas y el art. 62 al manejo de resultados inesperados. Elige fragmentos anonimizados o publica datos agregados. Conserva y explica los resultados discrepantes. Comprueba que los detalles de un relato tampoco revelen la identidad.</p></details>
+</article>
+  </section>
+  <section id="simulacro" role="tabpanel" aria-label="Simulacro" hidden>
+    <div class="card" id="m-inicio">
+      <p class="q">Simulacro del Parcial 3 (20 puntos)</p>
+      <p style="margin:0 0 10px">Formato de práctica basado en el parcial anterior: 10 de selección simple (0,75 c/u), 10 de verdadero o falso (0,25 c/u), un pareo de 10 (0,25 c/u) y 2 de desarrollo (3,75 c/u). Sin apuntes y con reloj.</p>
+      <div class="fila"><label for="m-tema" class="nota">Temas</label><select id="m-tema"></select>
+        <label for="m-min" class="nota">Tiempo</label><select id="m-min"><option value="45">45 min</option><option value="60" selected>60 min</option><option value="90">90 min</option></select>
+        <button type="button" class="btn prim" id="m-empezar">Empezar simulacro</button></div>
+    </div>
+    <div id="m-examen" hidden>
+      <div class="card fila" style="justify-content:space-between"><p class="reloj" id="m-reloj">60:00</p><button type="button" class="btn prim" id="m-terminar">Terminar y corregir</button></div>
+      <div id="m-preg" style="display:grid;gap:10px;margin-top:10px"></div>
+    </div>
+    <div id="m-result" hidden style="display:grid;gap:10px"></div>
+  </section>
+
+
+  <footer>
+    <p class="nota"><span class="chip lam">Lámina</span>conceptos de las láminas de clase. <span class="chip ext">Dato extra</span>conocimiento general.</p>
+    <p class="nota">Fuentes de clase: cronograma FBTCC03, láminas de método científico, metodología de investigación, áreas de vanguardia y ética profesional, y Código de Ética del Psicólogo. Las indicaciones para preparar el parcial orientan las prioridades. Las 3R son un marco complementario. Tus marcas se guardan solo en este navegador.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var D = {"temas": [["T1", "Tema 1 · Método científico"], ["T2", "Tema 2 · Enfoques y métodos de investigación"], ["T3", "Tema 3 · Ética profesional"], ["T4", "Tema 4 · Áreas de la psicología"]], "tarjetas": [["T1", "Psicología del sentido común (psicología popular)", "📑 Creencias intuitivas y teoría de la mente cotidiana. Útil para la interacción social, pero propensa a sesgos, interpretaciones subjetivas y falta de control."], ["T1", "La exigencia de la ciencia", "📑 Requiere trascender la intuición mediante reglas interpretativas funcionales. Busca alcanzar un conocimiento universal, objetivo y empíricamente comprobable (una visión desde ningún lugar)."], ["T1", "«Una visión desde ningún lugar»", "📑 Así describe la lámina el conocimiento científico: universal y objetivo, que no depende del punto de vista de quien mira. (Dato extra: la expresión es del filósofo Thomas Nagel, 1986.)"], ["T1", "Karl Popper", "📑 (1902-1994) Revolucionó la filosofía de la ciencia al rechazar la simple verificación (criterio del positivismo lógico). Propuso la falsabilidad como criterio de demarcación."], ["T1", "Criterio de demarcación", "📑 La línea que separa la ciencia de la pseudociencia. Para Popper, esa línea es la falsabilidad."], ["T1", "Verificación (positivismo lógico)", "📑 El criterio que Popper rechazó: dar una teoría por científica porque se acumulan casos que la confirman."], ["T1", "Principio de falsabilidad", "📑 Un conocimiento solo es científico si puede ser refutado."], ["T1", "«Si cualquier tipo de hecho sostiene una teoría…»", "📑 …es equivalente a decir que ninguno la sostiene."], ["T1", "La verdadera racionalidad científica (Popper)", "📑 No busca comprobar que tiene razón, sino permitir la posibilidad de demostrar que está equivocada."], ["T1", "Einstein según Popper", "📑 Ciencia estricta. Predijo que la luz de las estrellas se curvaría durante un eclipse; si no ocurría, la teoría colapsaba. La teoría se arriesgó a la falsación empírica. (Dato extra: se comprobó en el eclipse de 1919.)"], ["T1", "Freud según Popper", "📑 Pseudociencia. Cualquier comportamiento confirma la teoría: si un paciente niega el Complejo de Edipo, se interpreta como represión o resistencia. Protegida de la falsación mediante excusas ad hoc; explica todo, por lo tanto, no prueba nada."], ["T1", "Excusa ad hoc", "(Dato extra) Explicación inventada sobre la marcha para salvar una teoría cuando los hechos la contradicen. 📑 Es lo que, según Popper, protege al psicoanálisis de la falsación."], ["T1", "La trampa del nominalismo", "📑 La falla lógica de creer que basta con ponerle un nombre a algo para explicarlo. En la ciencia, la lógica debe ser clara."], ["T1", "La regla de oro de la explicación", "📑 La explicación no puede ser simplemente darle otro nombre al problema. ¡Nombrar no es explicar!"], ["T1", "Explicación circular (ejemplo de Molière)", "📑 ¿Por qué el Somitol da sueño? ¡Porque tiene poder soporífero! (Soporífero solo significa inductor de sueño.) La «explicación» repite el fenómeno con otras palabras."], ["T1", "El error circular en psicología", "📑 «Él es tímido y tiene pocos amigos porque es introvertido.» La introversión aquí es solo una etiqueta para la conducta tímida, no su causa."], ["T1", "La vía deductiva lineal", "📑 Para que la introversión sea una explicación científica genuina de la timidez, debe relacionarse con un factor causante independiente, como una predisposición genética o neurofisiológica, no solo ser un sinónimo de la conducta observada."], ["T1", "Teoría general", "📑 Explicaciones y predicciones amplias sobre fenómenos (ej. Difusión de la Responsabilidad de Latané y Darley)."], ["T1", "Hipótesis comprobable", "📑 Una predicción específica derivada de la teoría (por deducción lógica), formulada de manera que permita su comprobación empírica directa y su potencial falsación."], ["T1", "Difusión de la responsabilidad", "(Dato extra) Teoría de Latané y Darley (1968): cuantos más testigos hay en una emergencia, menos probable es que cada uno ayude, porque la responsabilidad se reparte entre todos. 📑 Es el ejemplo de teoría general de la lámina."], ["T1", "Percy W. Bridgman", "📑 Físico que en 1927 resolvió el problema de tratar con entidades inobservables (como la masa en física, o la mente en psicología). Creó el operacionalismo."], ["T1", "Operacionalismo", "📑 Un concepto inobservable se transforma en observable definiendo exactamente las operaciones empíricas necesarias para medirlo. Permitió a la psicología estudiar constructos internos sin residuos mentalistas, basándose puramente en procedimientos controlables."], ["T1", "Definición operacional", "📑 La traducción del concepto en procedimientos específicos comprobables. Ej.: hambre (concepto teórico inobservable) → horas de privación de alimento (48 horas sin comer), la variable medible."], ["T1", "La limitación correlacional", "📑 La observación natural y las encuestas descubren asociaciones, pero la correlación no demuestra causalidad."], ["T1", "El experimento psicológico", "📑 La herramienta más poderosa de la investigación. Establece relaciones de causa y efecto mediante la modificación deliberada de una variable en una situación estrictamente controlada, aislando los efectos de ese único cambio."], ["T1", "Variable independiente (VI)", "📑 La condición que el experimentador manipula directamente (ej. cantidad de observadores en una emergencia). Es independiente de la acción del sujeto. Es el input: la causa."], ["T1", "Variable dependiente (VD)", "📑 La condición que el experimentador mide. Se espera que cambie como resultado de la VI (ej. tiempo de respuesta para ayudar). Está subordinada a las acciones de los participantes. Es el output: el efecto."], ["T1", "Grupo experimental", "📑 Los participantes sometidos a la manipulación intencional (el tratamiento de la Variable Independiente)."], ["T1", "Grupo control", "📑 Grupo idéntico en todos los aspectos, salvo que no recibe el tratamiento. Sirve como línea base esencial: sin él es imposible determinar si el cambio en la VD fue causado verdaderamente por la manipulación."], ["T1", "El embudo epistemológico (la cadena del rigor)", "📑 1) Teoría falsable (Popper); 2) Lógica no circular (Hempel-Oppenheim); 3) Definiciones operacionales (Bridgman); 4) Prueba experimental (manipulación causal)."], ["T1", "Explanans y explanandum", "📑 (Hempel-Oppenheim) El explanans no contiene el explanandum: lo que explica (las causas) no puede contener lo que se quiere explicar (el fenómeno). Causas reales, no solo etiquetas."], ["T1", "Yela (1989)", "📑 «La psicología tiene vocación de ciencia… una unidad en la diversidad»."], ["T1", "La psicología como ciencia rigurosa", "📑 Aunque el objeto de estudio (la mente y la experiencia) es complejo e inobservable, el método utilizado para investigarlo es inexorablemente científico: falsabilidad, no circularidad, operacionalizar constructos y aislar variables mediante experimentación."], ["T2", "Investigación", "📑 Procesos sistemáticos, críticos y empíricos aplicados a un fenómeno o problema (Investigación, lám. 3)."], ["T2", "Enfoque cuantitativo", "📑 Secuencial y probatorio. Usa medición numérica y análisis estadístico para contrastar hipótesis y buscar patrones (láms. 5–6)."], ["T2", "Enfoque cualitativo", "📑 Indaga significados, experiencias y contextos. Recoge y analiza datos para afinar preguntas y generar interpretaciones (láms. 8–9)."], ["T2", "Deducción e inducción", "La deducción pasa de una teoría a una predicción específica. La inducción construye regularidades e interpretaciones a partir de casos o datos."], ["T2", "Método descriptivo", "Describe características o frecuencia de una conducta. Ejemplo: registrar cuántas personas estudian de noche."], ["T2", "Método correlacional", "Estudia la asociación entre variables medidas. La asociación deja abiertas explicaciones como causalidad inversa y una tercera variable."], ["T2", "Estudio de caso", "Examina en profundidad a una persona, grupo o situación. Ofrece detalle contextual y su generalización debe justificarse."], ["T2", "Fenomenología y hermenéutica", "La primera estudia la experiencia vivida. La segunda se concentra en interpretar el sentido de relatos o textos atendiendo a su contexto."], ["T2", "Cuestionario y Likert", "📑 Un cuestionario agrupa preguntas para medir variables. Un conjunto de afirmaciones con categorías de acuerdo puede formar una escala Likert (lám. 11)."], ["T2", "Diferencial semántico", "📑 Presenta pares de adjetivos opuestos, como útil–inútil, para calificar un objeto o una experiencia (lám. 11)."], ["T2", "Entrevista cualitativa", "📑 Conversación flexible y abierta para profundizar en la perspectiva del participante (lám. 13)."], ["T2", "Grupo de enfoque", "📑 Conversación moderada que aprovecha la interacción para observar cómo el grupo construye opiniones (lám. 13)."], ["T2", "Triangulación", "📑 Uso de varias fuentes o métodos, por ejemplo entrevistas y observación, para contrastar hallazgos (lám. 14)."], ["T2", "Bitácora de análisis", "📑 Documenta criterios, categorías y decisiones de codificación para aplicarlos de manera coherente (lám. 15)."], ["T2", "Preguntas abiertas y cerradas", "📑 Las abiertas permiten elaborar y son más exigentes de codificar. Las cerradas delimitan de antemano opciones comparables (lám. 18)."], ["T3", "Normas de investigación", "📖 Arts. 54–55. El estudio se inspira en principios éticos y científicos, con personal entrenado y calificado."], ["T3", "Voluntariedad", "📖 Art. 57 a. La persona puede aceptar o rechazar participar libremente, con la salvedad que el artículo remite al art. 56."], ["T3", "Derecho a retirarse", "📖 Art. 57 b. La persona puede suspender su participación en cualquier momento."], ["T3", "Información al participante", "📖 Art. 57 c. Explica naturaleza, alcance, fines y posibles consecuencias. El Código delimita el supuesto en que revelar información alteraría los resultados."], ["T3", "Asistencia y compensación", "📖 Art. 57 d–e. Prevé asistencia médica o psicológica necesaria por consecuencias del estudio y procedimientos de compensación por riesgos."], ["T3", "Necesidad y riesgos", "📖 Art. 59. Evalúa necesidad real, alcance y riesgos. Comunica con cuidado los motivos reales del estudio."], ["T3", "Anonimato", "📖 Art. 60. Protege el anonimato de las respuestas de investigación y evita el daño moral."], ["T3", "Resultados y discrepancias", "📖 Arts. 61–63. Evita prometer efectos sin actuar, y comunica resultados aunque difieran de lo esperado."], ["T3", "Crédito de autoría", "📖 Art. 70. Reconoce a quienes aportaron en proporción a su trabajo."], ["T3", "Secreto profesional", "📖 Arts. 142–145. Protege la información conocida por la profesión y persiste después de la relación profesional. Para un supuesto de excepción, identifica su fundamento y su alcance."], ["T3", "Doble rol y confidencialidad", "En un caso de práctica distingue quién consulta, para qué se recogen los datos, quién puede recibir un informe y qué información resulta pertinente."], ["T3", "Daño al consultante o a terceros", "📑 Art. 31. Causar daño mediante el uso de la profesión constituye falta grave."], ["T3", "Principios humanos y animales", "En humanos, prioriza consentimiento, retiro, integridad y resguardo de datos. En animales, recuerda las 3R como marco complementario: reemplazar, reducir y refinar."], ["T3", "Las tres R", "Reemplazar con alternativas cuando proceda, reducir el número de animales necesario y refinar procedimientos para minimizar sufrimiento."], ["T3", "Caso ético en cuatro pasos", "Identifica el dilema, nombra el principio o artículo, aplica a los hechos y propone una acción concreta con su justificación."], ["T4", "Neuropsicología clínica", "📑 Integra la neurociencia y la evaluación clínica para estudiar las relaciones entre las estructuras cerebrales y los procesos cognitivos y conductuales."], ["T4", "Aplicación de la neuropsicología clínica", "📑 Diagnóstico y rehabilitación holística de pacientes con daño cerebral adquirido (TCE, ACV), enfermedades neurodegenerativas (Alzheimer, Parkinson) y neurodesarrollo."], ["T4", "TCE y ACV", "(Dato extra) TCE = traumatismo craneoencefálico (un golpe fuerte en la cabeza). ACV = accidente cerebrovascular (un «derrame» o infarto cerebral). 📑 Son los ejemplos de daño cerebral adquirido de la lámina."], ["T4", "Psicología de la salud", "📑 Conjunto de aportes educativos, científicos y profesionales para promover la salud, prevenir enfermedades físicas y estudiar la etiología conductual de las dolencias crónicas."], ["T4", "Etiología conductual", "(Dato extra) Etiología = el estudio de las causas de una enfermedad. Etiología conductual = las causas que vienen de la conducta (fumar, sedentarismo, estrés)."], ["T4", "Psiconeuroinmunología (PNI)", "📑 Robert Ader y Nicholas Cohen demostraron la interacción directa entre el estrés psicológico, el sistema nervioso, el sistema endocrino y la respuesta inmunológica (disminución de defensas ante estados afectivos negativos)."], ["T4", "Robert Ader y Nicholas Cohen", "📑 Los autores de la PNI. (Dato extra: en 1975 condicionaron a ratas para que su sistema inmune bajara solo con probar agua con sacarina que antes habían recibido junto con un fármaco inmunosupresor.)"], ["T4", "Modelo biopsicosocial", "📑 Aparece junto a la PNI: la salud depende de la interacción entre la mente y las emociones, el sistema nervioso, el endocrino y el inmune. (Dato extra: lo propuso George Engel en 1977.)"], ["T4", "Psicología forense y jurídica", "📑 Especialidad que actúa como interfaz entre la psicología y el derecho."], ["T4", "Rol principal del psicólogo forense", "📑 Peritaje psicológico en tribunales: evaluación de imputabilidad penal, custodia de menores, validez del testimonio, evaluación de víctimas y secuelas traumáticas."], ["T4", "Lo que NO hace el psicólogo forense", "📑 Auxilia al juez emitiendo un informe imparcial; no realiza terapia ni defensa legal."], ["T4", "Imputabilidad penal", "(Dato extra) Si una persona, en el momento del delito, podía entender lo que hacía y controlar su conducta. De eso depende que se le pueda atribuir responsabilidad penal."], ["T4", "Ciberpsicología, realidad virtual y terapias inmersivas", "📑 Uso de tecnología inmersiva (Realidad Virtual, RV) para la exposición graduada en fobias (acrofobia, aracnofobia), trastorno por estrés postraumático (TEPT) en veteranos y entrenamiento de atención."], ["T4", "Telesalud / telepsicología", "📑 Consultas en línea para superar barreras geográficas y brindar atención en áreas rurales o confinamiento."], ["T4", "Exposición graduada", "(Dato extra) Enfrentar lo que da miedo poco a poco, de lo más fácil a lo más difícil. Con la RV se hace sin riesgo: por ejemplo, un edificio alto virtual para la acrofobia."], ["T4", "Acrofobia, aracnofobia y TEPT", "(Dato extra) Acrofobia = miedo intenso a las alturas. Aracnofobia = miedo intenso a las arañas. TEPT = trastorno por estrés postraumático."], ["T4", "Psicología positiva", "📑 Giro epistémico desde el modelo exclusivamente centrado en la patología hacia el estudio científico de las fortalezas humanas, el optimismo, la resiliencia, el flujo (flow) y las comunidades florecientes. Intervenciones centradas en el bienestar y en el fortalecimiento de los aspectos que más hacen resaltar a los seres humanos."], ["T4", "Modelo PERMA", "📑 P = emociones positivas (Positive emotions) · E = compromiso (Engagement) · R = relaciones positivas (Positive relationships) · M = sentido (Meaning) · A = logro (Accomplishment). (Dato extra: es de Martin Seligman, 2011.)"], ["T4", "Flujo (flow)", "(Dato extra) Estado de concentración total en una actividad que te gusta y te reta, en el que pierdes la noción del tiempo. Lo describió Mihaly Csikszentmihalyi."], ["T4", "Martin Seligman", "(Dato extra) Fundador de la psicología positiva (1998, como presidente de la Asociación Americana de Psicología) y autor del modelo PERMA."], ["T4", "Psicología clínica", "Evalúa e interviene en malestar psicológico y problemas de salud mental. Ejemplo: evaluación y tratamiento de ansiedad en consulta."], ["T4", "Psicología social", "Estudia cómo otras personas, los grupos y sus normas influyen en pensamientos, emociones y conducta. Ejemplo: prejuicio o conformidad."], ["T4", "Psicología educativa", "Estudia y mejora procesos de enseñanza y aprendizaje, evaluación formativa e inclusión. Ejemplo: adaptar estrategias de lectura en un aula."], ["T4", "Psicología del desarrollo", "Estudia cambios cognitivos, sociales y emocionales a lo largo de la vida. Ejemplo: comparar estrategias de regulación emocional por edad."], ["T4", "Psicología organizacional", "Estudia el comportamiento en el trabajo: selección, equipos, liderazgo, clima, motivación y bienestar laboral."], ["T4", "Psicología del deporte", "Aplica conocimientos psicológicos al rendimiento y bienestar en el deporte. Ejemplo: entrenamiento de atención y manejo de presión competitiva."], ["T4", "Área principal en casos mixtos", "Pregunta qué problema se quiere resolver. Ansiedad individual, aprendizaje escolar, normas grupales y clima del equipo de trabajo apuntan a objetivos distintos."], ["T2", "Fenomenología y hermenéutica", "Describe la experiencia vivida (fenomenología) o interpreta significados en su contexto (hermenéutica)."], ["T3", "Autoría y colaboraciones · art. 70", "Reconoce la contribución real de cada persona y explica en qué consistió su trabajo."], ["T3", "Secreto después de la consulta · arts. 142–143", "Protege lo conocido por la profesión y por el trabajo en equipo. El deber continúa después de la atención."], ["T4", "Psicología de la salud y clínica", "Salud: hábitos, prevención y afrontamiento de la enfermedad. Clínica: evaluación e intervención frente al malestar psicológico. Pueden colaborar."]], "seleccion": [["T1", "Según la lámina, la psicología del sentido común:", ["Es un conocimiento universal y objetivo.", "Es útil para la interacción social, pero propensa a sesgos, interpretaciones subjetivas y falta de control.", "Es el método que usa la psicología científica.", "Es lo mismo que el operacionalismo.", "Ninguna de las anteriores."], 1, "a describe la exigencia de la ciencia, no el sentido común."], ["T1", "Para Karl Popper, un conocimiento es científico si:", ["Se puede verificar con muchos casos.", "Lo acepta la mayoría de los científicos.", "Puede ser refutado.", "Explica cualquier conducta posible.", "Las opciones a y b son correctas."], 2, "Es el principio de falsabilidad. Popper rechazó la simple verificación (a)."], ["T1", "El criterio que Popper rechazó fue:", ["La falsabilidad.", "La simple verificación del positivismo lógico.", "La definición operacional.", "El método experimental.", "Todas las anteriores."], 1, "Popper revolucionó la filosofía de la ciencia al rechazar la verificación como criterio."], ["T1", "En la matriz de demarcación, Popper considera la teoría de Einstein ciencia estricta porque:", ["Explica todos los fenómenos posibles.", "Se arriesgó a la falsación empírica: si la luz no se curvaba en el eclipse, la teoría colapsaba.", "Nunca fue puesta a prueba.", "Se protegió con excusas ad hoc.", "Las opciones a y d son correctas."], 1, "a y d describen justamente lo que Popper le critica al psicoanálisis."], ["T1", "Según Popper, el psicoanálisis de Freud es pseudociencia porque:", ["Fue refutado por un experimento.", "Usa grupos de control.", "Cualquier comportamiento confirma la teoría: explica todo y, por lo tanto, no prueba nada.", "Define sus conceptos de forma operacional.", "Ninguna de las anteriores."], 2, "Si el paciente niega el Edipo, se interpreta como represión: la teoría siempre gana."], ["T1", "«¡Nombrar no es explicar!» es:", ["El principio de falsabilidad.", "La regla de oro de la explicación.", "La definición de operacionalismo.", "La conclusión de Yela.", "La definición de variable dependiente."], 1, "Es la regla de oro contra la trampa del nominalismo."], ["T1", "«Él es tímido y tiene pocos amigos porque es introvertido» es un ejemplo de:", ["Definición operacional.", "Explicación circular.", "Hipótesis comprobable.", "Difusión de la responsabilidad.", "Grupo control."], 1, "La introversión es solo una etiqueta para la conducta tímida, no su causa."], ["T1", "Para que la introversión explique de verdad la timidez, según la lámina debe:", ["Tener un nombre más técnico.", "Relacionarse con un factor causante independiente, como una predisposición genética o neurofisiológica.", "Ser un sinónimo de la conducta observada.", "Ser aceptada por el sentido común.", "Las opciones a y c son correctas."], 1, "Es la vía deductiva lineal: una causa independiente, no un sinónimo."], ["T1", "Una hipótesis comprobable es:", ["Una explicación amplia sobre muchos fenómenos.", "Una predicción específica derivada de la teoría, formulada para permitir su comprobación empírica y su potencial falsación.", "Una creencia intuitiva.", "La variable que el experimentador mide.", "Ninguna de las anteriores."], 1, "a es la definición de teoría general."], ["T1", "El operacionalismo fue propuesto en 1927 por:", ["Karl Popper.", "Hempel y Oppenheim.", "Percy W. Bridgman.", "Latané y Darley.", "Mariano Yela."], 2, "Bridgman era físico y resolvió el problema de las entidades inobservables."], ["T1", "Si «hambre» se define como «48 horas sin comer», se está usando:", ["Una explicación circular.", "Una definición operacional.", "Una correlación.", "Un grupo control.", "La psicología del sentido común."], 1, "Es el ejemplo de la lámina: el concepto inobservable se vuelve una variable medible."], ["T1", "En el experimento sobre emergencias, «la cantidad de observadores» es:", ["La variable dependiente.", "La variable independiente.", "El grupo control.", "Una correlación.", "Ninguna de las anteriores."], 1, "La manipula el experimentador. El tiempo de respuesta para ayudar es la VD."], ["T1", "La variable dependiente es:", ["La condición que el experimentador manipula.", "La condición que el experimentador mide y que se espera que cambie por la VI.", "El grupo que no recibe tratamiento.", "La causa del experimento.", "Las opciones a y d son correctas."], 1, "a y d describen la variable independiente (el input o causa)."], ["T1", "El grupo control:", ["Recibe el tratamiento de la VI.", "Es idéntico al experimental, salvo que no recibe el tratamiento, y sirve como línea base.", "Es el que mide la VD.", "No hace falta si hay muchos participantes.", "Ninguna de las anteriores."], 1, "Sin grupo control es imposible saber si el cambio lo causó la manipulación."], ["T1", "La correlación:", ["Demuestra causa y efecto.", "Descubre asociaciones, pero no demuestra causalidad.", "Es la herramienta más poderosa de la investigación.", "Requiere un grupo control.", "Las opciones a y c son correctas."], 1, "La herramienta más poderosa es el experimento."], ["T1", "En el embudo epistemológico, «el explanans no contiene el explanandum» corresponde a:", ["La teoría falsable de Popper.", "La lógica no circular de Hempel-Oppenheim.", "Las definiciones operacionales de Bridgman.", "La prueba experimental.", "La psicología popular."], 1, "Es el eslabón 2: causas reales, no solo etiquetas."], ["T2", "¿Qué enfoque conviene para comparar el promedio de estrés de 200 estudiantes?", ["Entrevistas abiertas sin cuantificar", "Cuantitativo con medición numérica", "Fenomenológico exclusivamente", "Estudio de un episodio único"], 1, "La pregunta pide comparar puntuaciones y emplear análisis numérico."], ["T2", "¿Qué diseño sirve para conocer cómo viven el primer semestre cinco estudiantes?", ["Experimento con una sola medida", "Cuantitativo para sacar una media", "Cualitativo con entrevistas abiertas", "Censo con opción sí o no"], 2, "Interesa el significado de sus experiencias y su contexto."], ["T2", "¿Cuál es la característica del enfoque cuantitativo en las láminas?", ["Secuencial y probatorio", "Inductivo y sin medición", "Limitado al estudio de caso", "Basado solo en relatos"], 0, "Se estructura para medir y contrastar hipótesis."], ["T2", "¿Qué puede pasar con las preguntas cualitativas conforme aparecen datos?", ["Deben quedar congeladas", "Deben convertirse siempre en números", "Ya no necesitan evidencia", "Pueden afinarse durante la interpretación"], 3, "El proceso cualitativo es flexible y se retroalimenta."], ["T2", "¿Cuál es un ejemplo de ítem tipo Likert?", ["Una pregunta sin alternativas", "Una afirmación con grados de acuerdo", "Una lista de pares de adjetivos opuestos", "Una historia de vida"], 1, "Ejemplo: «Me concentro en clase», de totalmente en desacuerdo a totalmente de acuerdo."], ["T2", "¿Cuándo usas diferencial semántico?", ["Cuando observas conductas al azar", "Cuando usas categorías freudianas", "Cuando calificas entre adjetivos opuestos", "Cuando manipulas dos tratamientos"], 2, "Ejemplo: representar una tarea entre agradable y desagradable."], ["T2", "¿Qué haces al triangular datos?", ["Comparas entrevistas, observación y documentos", "Promedias tres variables siempre", "Descartas cualquier desacuerdo", "Repites una pregunta tres veces"], 0, "La triangulación compara métodos o fuentes para dar contexto y detectar diferencias."], ["T2", "¿Para qué sirve una bitácora de análisis?", ["Asignar tratamiento al azar", "Comparar dos PIB", "Reemplazar el consentimiento", "Conservar las decisiones y reglas de codificación"], 3, "Ayuda a mantener consistencia y trazabilidad."], ["T2", "Dos variables aumentan juntas. ¿Qué concluyes con esos datos?", ["Ya demostraste causa", "Hay asociación y quedan causas alternativas", "No hay relación entre las medidas", "El efecto es necesariamente bidireccional"], 1, "La correlación por sí sola deja abierta la causalidad inversa o una tercera variable."], ["T2", "¿Qué describe mejor un estudio de caso?", ["Análisis en profundidad de una unidad", "Resultado generalizable sin límites", "Prueba con asignación aleatoria obligatoria", "Conteo de una población completa"], 0, "Su fortaleza es el detalle. Las conclusiones generales requieren evidencia adicional."], ["T2", "¿Qué pregunta corresponde a una entrevista abierta?", ["¿Sí o no?", "¿De 1 a 5?", "¿Cómo cambió tu rutina al empezar la universidad?", "¿Opción A o B?"], 2, "Deja que la persona describa la experiencia con sus propias palabras."], ["T2", "¿Qué diseño contrasta mejor el efecto de una pausa en el rendimiento?", ["Medir las dos variables en una encuesta", "Pedir opiniones a un único grupo", "Estudiar un testimonio", "Asignar con y sin pausa y comparar rendimiento con condiciones equivalentes"], 3, "La manipulación y el control hacen más sólida la inferencia causal."], ["T3", "El investigador dice que perderás puntos si abandonas la prueba. ¿Qué está comprometido?", ["El derecho a suspender la participación", "La autoría del informe", "La triangulación de datos", "La elección del año base"], 0, "El art. 57 b protege la posibilidad de retirarse en cualquier momento."], ["T3", "¿Qué información se explica al obtener consentimiento para un estudio con personas?", ["Solo el nombre de quien dirige", "Solamente el incentivo", "Naturaleza, alcance, fines y posibles consecuencias", "Nada si es de la universidad"], 2, "Es la pauta del art. 57 c para la experimentación con humanos."], ["T3", "¿Qué medida favorece el anonimato de respuestas?", ["Publicar nombres y puntajes", "Reportar resultados agregados y evitar identificadores", "Compartir el listado con el salón", "Sumar el correo a cada fila publicada"], 1, "El art. 60 protege las respuestas y procura reducir daños."], ["T3", "Una hipótesis no se confirma. ¿Qué dice el Código sobre silenciar ese resultado por desacuerdo?", ["Lo exige", "Lo permite siempre", "Lo requiere si hay reputación en juego", "El desacuerdo por sí solo no lo justifica"], 3, "Art. 62. Los resultados se comunican con sus límites, aunque contradigan la hipótesis."], ["T3", "¿A quién corresponde supervisar una investigación psicológica?", ["Personal técnicamente entrenado y científicamente calificado", "A cualquiera que consiga participantes", "Solo a quien financia el estudio", "Exclusivamente al participante"], 0, "Art. 55."], ["T3", "¿Cuál es el principio más directamente afectado si se divulga a un grupo de amigos lo escuchado en consulta?", ["Selección aleatoria", "Diferencial semántico", "Secreto profesional", "Neutralidad monetaria"], 2, "La información recibida por el ejercicio profesional está protegida desde el art. 142."], ["T3", "En el marco de las 3R, ¿usar una simulación válida en vez de animales ejemplifica qué principio?", ["Reducir", "Reemplazar", "Refinar", "Triangular"], 1, "Reemplazar es recurrir a un método alternativo cuando puede responder la pregunta."], ["T3", "¿Cuál es un ejemplo de refinamiento con animales?", ["Usar un modelo sin animales", "Aumentar la muestra por rutina", "Ocultar efectos adversos", "Ajustar manejo y procedimientos para reducir sufrimiento"], 3, "El refinamiento mejora condiciones y minimiza daños del método."], ["T3", "¿Qué conviene hacer primero ante una solicitud de datos identificables por un tercero?", ["Identificar quién solicita y qué fundamento tiene", "Enviar el expediente completo", "Publicar solo las iniciales en redes", "Asumir que cualquier solicitud es una excepción"], 0, "La confidencialidad es el punto de partida. Identifica fundamento, destinatario y alcance."], ["T3", "¿Qué reconoce el art. 70 al publicar un estudio?", ["El cargo jerárquico por encima del aporte", "La autoría por orden de edad", "La contribución real de cada persona", "Únicamente al financiador"], 2, "El crédito refleja el trabajo realizado."], ["T3", "¿Qué se evalúa según el art. 59 antes de realizar una investigación?", ["Solo que se publique", "Necesidad real, alcance y riesgos", "Únicamente el costo", "La popularidad del tema"], 1, "Relaciona los riesgos con la necesidad y el alcance del estudio."], ["T3", "¿Qué respuesta aplica mejor a un caso ético?", ["Enumerar artículos al azar", "Decir «no es ético» y terminar", "Dar una opinión personal sin hechos", "Identificar principio, vincularlo a hechos y justificar una acción"], 3, "La respuesta modelo aplica el principio, expone el riesgo y propone un paso concreto."], ["T4", "La neuropsicología clínica:", ["Estudia las fortalezas humanas y el bienestar.", "Integra la neurociencia y la evaluación clínica para estudiar las relaciones entre estructuras cerebrales y procesos cognitivos y conductuales.", "Actúa como interfaz entre la psicología y el derecho.", "Usa solo la realidad virtual.", "Ninguna de las anteriores."], 1, "a es la psicología positiva y c la forense."], ["T4", "Un paciente con secuelas de un ACV sería atendido, sobre todo, por:", ["La psicología forense.", "La psicología positiva.", "La neuropsicología clínica.", "La telepsicología únicamente.", "Las opciones a y b son correctas."], 2, "El ACV es daño cerebral adquirido: diagnóstico y rehabilitación de la neuropsicología."], ["T4", "Robert Ader y Nicholas Cohen demostraron:", ["Que la luz se curva en un eclipse.", "La interacción entre el estrés psicológico, el sistema nervioso, el endocrino y la respuesta inmunológica.", "La difusión de la responsabilidad.", "El modelo PERMA.", "La falsabilidad del psicoanálisis."], 1, "Es la base de la psiconeuroinmunología (PNI)."], ["T4", "Según la PNI, ante estados afectivos negativos:", ["Aumentan las defensas.", "Disminuyen las defensas.", "No cambia el sistema inmune.", "Solo cambia el sistema endocrino.", "Ninguna de las anteriores."], 1, "La lámina dice: disminución de defensas ante estados afectivos negativos."], ["T4", "El psicólogo forense:", ["Hace terapia al acusado.", "Hace la defensa legal.", "Auxilia al juez emitiendo un informe imparcial.", "Decide la sentencia.", "Las opciones a y b son correctas."], 2, "No realiza terapia ni defensa legal."], ["T4", "¿Cuál NO es una tarea del peritaje psicológico según la lámina?", ["Evaluación de imputabilidad penal.", "Custodia de menores.", "Validez del testimonio.", "Rehabilitación de pacientes con Alzheimer.", "Evaluación de víctimas y secuelas traumáticas."], 3, "La rehabilitación del Alzheimer es de la neuropsicología clínica."], ["T4", "La realidad virtual se usa, según la lámina, para:", ["La exposición graduada en fobias, el TEPT en veteranos y el entrenamiento de atención.", "El peritaje en tribunales.", "Medir la respuesta inmunológica.", "Las consultas en zonas rurales.", "Ninguna de las anteriores."], 0, "d es la telepsicología, que no necesita RV."], ["T4", "La psicología positiva representa:", ["Un modelo centrado exclusivamente en la patología.", "Un giro epistémico hacia el estudio científico de las fortalezas humanas, el optimismo, la resiliencia y el flujo.", "Una rama del psicoanálisis.", "Una técnica de realidad virtual.", "Las opciones a y c son correctas."], 1, "Es un giro desde el modelo centrado en la patología."], ["T4", "En el modelo PERMA, la letra M significa:", ["Motivación (Motivation).", "Memoria (Memory).", "Sentido (Meaning).", "Mente (Mind).", "Logro (Mastery)."], 2, "P emociones positivas, E compromiso, R relaciones positivas, M sentido, A logro."], ["T4", "Una profesional rediseña cómo se enseña la lectura en el aula y mide el avance. ¿Área principal?", ["Clínica", "Forense", "Educativa", "Organizacional"], 2, "La finalidad central es mejorar la enseñanza y el aprendizaje."], ["T4", "Una consulta evalúa malestar persistente y plantea tratamiento individual. ¿Área principal?", ["Clínica", "Social", "Organizacional", "Del deporte"], 0, "El objetivo central es la evaluación e intervención psicológica clínica."], ["T4", "Un estudio prueba si la presión de otros cambia lo que una persona responde. ¿Área principal?", ["Educativa", "Organizacional", "Clínica", "Social"], 3, "El problema investigado es la influencia de otros y las normas de grupo."], ["T4", "Una empresa quiere reducir rotación y mejorar clima de trabajo. ¿Área principal?", ["Social", "Organizacional", "Neuropsicología", "Forense"], 1, "El objetivo central se refiere a la conducta y el bienestar en el trabajo."], ["T4", "Investigar cómo cambia la memoria entre niñez y vejez corresponde principalmente a qué área?", ["Organizacional", "Forense", "Del desarrollo", "Del deporte"], 2, "El foco está en los cambios a lo largo del ciclo vital."], ["T4", "¿Qué intervención corresponde mejor a psicología del deporte?", ["Entrenar atención y rutinas para manejar presión competitiva", "Redactar un peritaje judicial", "Evaluar un método de alfabetización", "Seleccionar personal administrativo"], 0, "El objetivo es el rendimiento y bienestar en el contexto deportivo."], ["T3", "¿Qué corresponde al publicar una investigación en equipo?", ["Reconocer el aporte real de cada colaborador.", "Dar autoría a quien tiene mayor jerarquía.", "Omitir a quienes recogieron los datos.", "Borrar los hallazgos inesperados."], 0, "El art. 70 pide reconocer de forma justa las contribuciones y aclarar su naturaleza."], ["T4", "Una psicóloga estudia por qué un grupo presiona a sus miembros para que callen en el colegio. ¿Qué área responde mejor a esa pregunta?", ["Educativa.", "Social.", "Clínica.", "Organizacional."], 1, "La pregunta gira en torno a normas e influencia grupal, aunque ocurra en un colegio."]], "vf": [["T1", "La psicología del sentido común busca un conocimiento universal, objetivo y empíricamente comprobable.", false, "Eso es la exigencia de la ciencia. El sentido común es intuitivo y propenso a sesgos."], ["T1", "Popper propuso la verificación como criterio para separar ciencia de pseudociencia.", false, "Popper rechazó la verificación (del positivismo lógico) y propuso la falsabilidad."], ["T1", "Para Popper, si cualquier hecho sostiene una teoría, es equivalente a decir que ninguno la sostiene.", true, "Una teoría que no puede fallar no dice nada."], ["T1", "Para Popper, la racionalidad científica busca comprobar que tiene razón.", false, "Busca permitir la posibilidad de demostrar que está equivocada."], ["T1", "Popper consideró el psicoanálisis de Freud como ciencia estricta.", false, "Lo consideró pseudociencia. La ciencia estricta era la física de Einstein."], ["T1", "En el ejemplo de Molière, decir que el Somitol da sueño porque es soporífero es una explicación circular.", true, "Soporífero solo significa inductor de sueño."], ["T1", "Para Hempel y Oppenheim, el explanans puede contener el explanandum.", false, "El explanans NO contiene el explanandum."], ["T1", "Bridgman era un físico y propuso el operacionalismo en 1927.", true, "Para tratar con entidades inobservables, como la masa o la mente."], ["T1", "La correlación demuestra causalidad.", false, "Descubre asociaciones, pero no demuestra causalidad."], ["T1", "La variable independiente es la que el experimentador mide.", false, "La VI se manipula; la VD se mide."], ["T1", "El grupo control es idéntico al experimental, salvo que no recibe el tratamiento.", true, "Sirve como línea base esencial."], ["T1", "Yela (1989) describió la psicología como «una unidad en la diversidad».", true, "«La psicología tiene vocación de ciencia… una unidad en la diversidad.»"], ["T2", "Los enfoques cuantitativo y cualitativo pueden ser sistemáticos y empíricos.", true, "Cambian la lógica y el tipo de datos, pero ambos aplican procedimientos rigurosos."], ["T2", "Una encuesta que encuentra una relación estadística demuestra cuál variable causó la otra.", false, "La asociación no distingue causalidad inversa ni factores de confusión."], ["T2", "La entrevista cualitativa puede ajustarse a respuestas inesperadas.", true, "Su formato abierto y flexible permite profundizar."], ["T2", "El diferencial semántico se construye con afirmaciones y grados de acuerdo.", false, "Eso caracteriza a ítems Likert. El diferencial usa extremos adjetivos."], ["T2", "En el enfoque cualitativo las preguntas pueden afinarse después de comenzar a observar.", true, "La recolección y la interpretación pueden alternarse."], ["T2", "Una pregunta cerrada deja a los participantes elaborar sin límites.", false, "Ofrece categorías delimitadas."], ["T2", "Un grupo de enfoque permite observar cómo interactúan las perspectivas.", true, "La discusión entre personas es parte del dato."], ["T2", "La triangulación exige usar una sola fuente de datos.", false, "Contrasta varias fuentes o métodos."], ["T2", "La bitácora explica cómo se construyeron y aplicaron las categorías.", true, "Registra criterios y decisiones del análisis."], ["T2", "Una técnica de observación siempre es cualitativa.", false, "Un registro estructurado con conteos y categorías también puede usarse cuantitativamente."], ["T2", "En una investigación exploratoria, una pregunta abierta puede ayudar a descubrir opciones que el equipo no anticipó.", true, "La respuesta aporta vocabulario y posibilidades nuevas."], ["T2", "Una descripción de experiencias puede ser útil aunque su fin inmediato no sea calcular un promedio.", true, "El enfoque cualitativo puede enfatizar significados y contexto."], ["T3", "En el Código, firmar una hoja sustituye el derecho a retirarse.", false, "El art. 57 b protege el retiro en cualquier momento."], ["T3", "La evaluación de riesgos incluye preguntarse si el estudio es realmente necesario.", true, "Art. 59."], ["T3", "La información de una consulta pierde toda protección cuando termina la relación profesional.", false, "El deber subsiste después de concluir la relación profesional."], ["T3", "El investigador debe cuidar el anonimato de las respuestas.", true, "Art. 60."], ["T3", "Un resultado incómodo puede silenciarse simplemente porque contradice la hipótesis.", false, "El art. 62 rechaza el desacuerdo como justificación suficiente."], ["T3", "La autoría académica debe reflejar la contribución efectiva.", true, "Art. 70."], ["T3", "Refinar significa aumentar la muestra sin justificación.", false, "Refinar busca reducir daño y sufrimiento vinculados al procedimiento."], ["T3", "Usar una alternativa válida a un procedimiento con animales ilustra el reemplazo.", true, "Es una de las tres R."], ["T3", "La posibilidad de hacer un estudio es razón suficiente para ejecutarlo, sin revisar sus riesgos.", false, "La necesidad, el alcance y los riesgos se evalúan en conjunto."], ["T3", "Causar daño mediante el ejercicio profesional puede ser falta grave.", true, "Art. 31."], ["T3", "El consentimiento se relaciona con comprender la naturaleza, los fines y las posibles consecuencias del estudio.", true, "Art. 57 c, con el supuesto específico que el propio artículo contempla."], ["T3", "El resguardo ético termina al recolectar el último dato.", false, "El manejo, la publicación y la protección de los datos también importan."], ["T4", "La neuropsicología clínica atiende el daño cerebral adquirido, como el TCE y el ACV.", true, "También enfermedades neurodegenerativas (Alzheimer, Parkinson) y el neurodesarrollo."], ["T4", "La psicología de la salud estudia la etiología conductual de las dolencias crónicas.", true, "Además promueve la salud y previene enfermedades físicas."], ["T4", "Según la PNI, los estados afectivos negativos aumentan las defensas del cuerpo.", false, "Las disminuyen."], ["T4", "El psicólogo forense puede hacer terapia y defensa legal al acusado.", false, "No realiza terapia ni defensa legal: emite un informe imparcial para el juez."], ["T4", "La psicología forense actúa como interfaz entre la psicología y el derecho.", true, "Es la definición de la lámina."], ["T4", "La telepsicología sirve para superar barreras geográficas y atender en áreas rurales o confinamiento.", true, "Son consultas en línea."], ["T4", "La realidad virtual se usa para la exposición graduada en fobias como la acrofobia y la aracnofobia.", true, "También para el TEPT en veteranos y el entrenamiento de atención."], ["T4", "La psicología positiva se centra exclusivamente en la patología.", false, "Es un giro desde ese modelo hacia las fortalezas humanas."], ["T4", "En el modelo PERMA, la E significa compromiso (engagement).", true, "P emociones positivas, E compromiso, R relaciones, M sentido, A logro."], ["T4", "La psicología organizacional puede estudiar clima, selección y motivación laboral.", true, "Su contexto central es el comportamiento en el trabajo."], ["T4", "Una intervención dirigida a mejorar la enseñanza de matemáticas en un salón corresponde principalmente a la psicología forense.", false, "La meta es de aprendizaje y enseñanza, propia del área educativa."], ["T4", "La influencia de normas grupales sobre una decisión es un objeto de psicología social.", true, "El área social analiza la influencia de otras personas y grupos."], ["T4", "La psicología del desarrollo se limita a la niñez.", false, "Examina cambios a lo largo de todo el ciclo vital."], ["T4", "La psicología clínica puede incluir evaluación e intervención frente a malestar psicológico.", true, "Ambas forman parte de la práctica clínica."], ["T4", "El ámbito donde ocurre un problema siempre basta para decidir el área, sin conocer el objetivo.", false, "Un hospital, escuela o empresa puede reunir problemas de varias áreas. Mira el objetivo."]], "pareos": [["T1", "Popper y la lógica de la explicación", [["Principio de falsabilidad", "Un conocimiento solo es científico si puede ser refutado."], ["Criterio de demarcación", "La línea que separa la ciencia de la pseudociencia."], ["Verificación", "Criterio del positivismo lógico que Popper rechazó."], ["Excusas ad hoc", "Lo que protege al psicoanálisis de la falsación, según Popper."], ["Nominalismo", "Creer que basta con ponerle un nombre a algo para explicarlo."], ["Explicación circular", "«Es tímido porque es introvertido.»"], ["Explanans", "Lo que explica: las causas."], ["Explanandum", "Lo que se quiere explicar: el fenómeno."]]], ["T1", "Hipótesis, medición y experimento", [["Teoría general", "Explicaciones y predicciones amplias sobre fenómenos."], ["Hipótesis comprobable", "Predicción específica derivada de la teoría, que permite su comprobación y su falsación."], ["Operacionalismo", "Volver observable un concepto definiendo las operaciones para medirlo."], ["Definición operacional", "Hambre = 48 horas sin comer."], ["Variable independiente", "La condición que el experimentador manipula: la causa."], ["Variable dependiente", "La condición que el experimentador mide: el efecto."], ["Grupo control", "Idéntico al experimental, pero no recibe el tratamiento."], ["Correlación", "Descubre asociaciones, pero no demuestra causalidad."]]], ["T1", "Autores del Tema 1", [["Karl Popper", "Falsabilidad y criterio de demarcación."], ["Hempel y Oppenheim", "Lógica no circular: el explanans no contiene el explanandum."], ["Percy W. Bridgman", "Operacionalismo (1927)."], ["Latané y Darley", "Difusión de la responsabilidad."], ["Mariano Yela", "«Una unidad en la diversidad» (1989)."], ["Molière", "El ejemplo del poder soporífero."]]], ["T2", "Enfoques y métodos de investigación", [["Cuantitativo", "Medición numérica y contraste de hipótesis."], ["Cualitativo", "Interpretación de experiencias y significados en contexto."], ["Deducción", "De teoría general a predicción específica."], ["Inducción", "De observaciones particulares a patrones o interpretaciones."], ["Método descriptivo", "Registra características o frecuencias del fenómeno."], ["Correlación", "Asociación entre variables medidas."], ["Likert", "Categorías graduadas de acuerdo ante una afirmación."], ["Diferencial semántico", "Ubicación entre dos adjetivos extremos."], ["Triangulación", "Contraste entre fuentes o métodos."], ["Bitácora analítica", "Rastro de decisiones y criterios de codificación."]]], ["T3", "Ética profesional", [["Artículo 31", "Falta grave por causar daño mediante la profesión."], ["Artículo 55", "Personal técnicamente entrenado y científicamente calificado."], ["Artículo 57 b", "Facultad de suspender la participación en cualquier momento."], ["Artículo 57 c", "Información sobre naturaleza, alcance, fines y consecuencias del estudio."], ["Artículo 59", "Necesidad real, alcance y riesgos de investigar."], ["Artículo 60", "Anonimato de respuestas y protección frente al daño moral."], ["Artículo 62", "El desacuerdo con resultados no justifica silenciarlos."], ["Artículo 70", "Crédito según contribución de cada autor."], ["Artículo 142", "Carácter inherente y obligatorio del secreto profesional."], ["Refinamiento", "Modificar procedimientos para disminuir sufrimiento."]]], ["T4", "Áreas de vanguardia", [["Neuropsicología clínica", "Relaciones entre estructuras cerebrales y procesos cognitivos y conductuales."], ["Psicología de la salud", "Promover la salud y estudiar la etiología conductual de las dolencias crónicas."], ["Psiconeuroinmunología", "Estrés, sistema nervioso, endocrino e inmune interactúan (Ader y Cohen)."], ["Psicología forense", "Interfaz entre la psicología y el derecho."], ["Ciberpsicología y RV", "Exposición graduada en fobias y TEPT con tecnología inmersiva."], ["Telepsicología", "Consultas en línea para áreas rurales o confinamiento."], ["Psicología positiva", "Estudio científico de las fortalezas humanas, el optimismo y la resiliencia."], ["Modelo PERMA", "Emociones positivas, compromiso, relaciones, sentido y logro."]]], ["T4", "Áreas de la psicología", [["Clínica", "Evaluación e intervención ante malestar psicológico."], ["Social", "Normas, influencia y relaciones entre grupos."], ["Educativa", "Enseñanza, aprendizaje e inclusión escolar."], ["Organizacional", "Clima, selección y conducta en el trabajo."], ["Del desarrollo", "Cambios a lo largo del ciclo vital."], ["Del deporte", "Rendimiento y bienestar durante entrenamiento y competencia."], ["De la salud", "Prevención, promoción y hábitos relacionados con la salud."], ["Forense", "Evaluación pericial para responder preguntas del ámbito judicial."], ["Neuropsicología", "Relación entre funcionamiento cerebral, cognición y conducta."], ["Psicología positiva", "Estudio científico de fortalezas y bienestar."]]]], "desarrollo": [["T1", "Explique el criterio de demarcación de Popper y compare cómo lo aplicó a la teoría de Einstein y al psicoanálisis de Freud.", "El criterio de demarcación es la línea que separa la ciencia de la pseudociencia. Karl Popper (1902-1994) rechazó la simple verificación del positivismo lógico y propuso el principio de falsabilidad: un conocimiento solo es científico si puede ser refutado. Si cualquier tipo de hecho sostiene una teoría, es como decir que ninguno la sostiene; por eso la verdadera racionalidad científica no busca comprobar que tiene razón, sino permitir demostrar que está equivocada. Einstein es el ejemplo de ciencia estricta: predijo que la luz de las estrellas se curvaría durante un eclipse, y si eso no ocurría su teoría colapsaba; se arriesgó a la falsación empírica. Freud es el ejemplo de pseudociencia: cualquier comportamiento confirma el psicoanálisis; si un paciente niega el Complejo de Edipo, se interpreta como represión o resistencia. La teoría se protege con excusas ad hoc: explica todo y, por lo tanto, no prueba nada. En conclusión, para Popper lo que hace científica a una teoría es que se arriesgue a estar equivocada."], ["T1", "¿Qué es una explicación circular? Explique la trampa del nominalismo con los dos ejemplos de la lámina y diga qué haría falta para una explicación científica genuina.", "La trampa del nominalismo es creer que basta con ponerle un nombre a algo para explicarlo. La regla de oro de la explicación dice que la explicación no puede ser simplemente darle otro nombre al problema: ¡nombrar no es explicar! Una explicación circular repite el fenómeno con otras palabras. El ejemplo de Molière: el Somitol da sueño «porque tiene poder soporífero», pero soporífero solo significa inductor de sueño. En psicología: «él es tímido y tiene pocos amigos porque es introvertido»; aquí la introversión es solo una etiqueta de la conducta tímida, no su causa. Para que fuera una explicación científica genuina, la introversión debería relacionarse con un factor causante independiente, como una predisposición genética o neurofisiológica (vía deductiva lineal). Hempel y Oppenheim lo resumen así: el explanans (lo que explica) no debe contener el explanandum (lo que se explica); hacen falta causas reales, no solo etiquetas."], ["T1", "Explique el operacionalismo de Bridgman y dé un ejemplo de definición operacional. ¿Por qué fue importante para la psicología?", "En 1927, el físico Percy W. Bridgman resolvió el problema de tratar con entidades inobservables, como la masa en física o la mente en psicología. El operacionalismo dice que un concepto inobservable se transforma en observable definiendo exactamente las operaciones empíricas necesarias para medirlo. La definición operacional es la traducción del concepto en procedimientos específicos comprobables. Ejemplo de la lámina: el hambre es un estado subjetivo e interno que no se puede cuantificar directamente, pero si se define como «horas de privación de alimento» (por ejemplo, 48 horas sin comer), se vuelve un hecho cuantificable y controlable experimentalmente. Fue importante porque permitió a la psicología estudiar constructos internos (la mente, el miedo, el hambre) sin residuos mentalistas, basándose en procedimientos controlables. Es el tercer eslabón del embudo epistemológico, después de la teoría falsable y la lógica no circular, y antes de la prueba experimental."], ["T1", "Explique por qué el experimento es la herramienta más poderosa de la investigación. Defina variable independiente, variable dependiente, grupo experimental y grupo control con un ejemplo.", "La observación natural y las encuestas descubren asociaciones, pero la correlación no demuestra causalidad. El experimento psicológico es la herramienta más poderosa porque establece relaciones de causa y efecto mediante la modificación deliberada de una variable en una situación estrictamente controlada, aislando los efectos de ese único cambio. La variable independiente (VI) es la condición que el experimentador manipula directamente y no depende del sujeto: es la causa. La variable dependiente (VD) es la condición que se mide y que se espera que cambie por la VI: es el efecto. Ejemplo (difusión de la responsabilidad, Latané y Darley): la VI es la cantidad de observadores en una emergencia y la VD es el tiempo de respuesta para ayudar. El grupo experimental recibe la manipulación de la VI; el grupo control es idéntico en todo, salvo que no recibe el tratamiento, y sirve como línea base: sin él es imposible saber si el cambio en la VD lo causó de verdad la manipulación."], ["T2", "Compara un estudio cuantitativo y uno cualitativo sobre estrés universitario. Formula una pregunta e indica cómo obtendrías los datos en cada uno.", "Cuantitativo: «¿Se relacionan las horas de sueño con la puntuación de estrés?». Registra horas y aplica una escala con medición numérica. Cualitativo: «¿Cómo experimenta el estrés el alumnado que trabaja?». Entrevista de forma abierta, documenta categorías y compara relatos. Explica que la asociación entre sueño y estrés requiere pruebas adicionales para sostener causalidad."], ["T2", "Explica cómo pasar de una correlación a una hipótesis causal sobre el uso del teléfono y la concentración.", "La correlación puede mostrar que más notificaciones se asocian con menor concentración. Hipótesis: un grupo con notificaciones activas cometerá más errores. Manipula notificaciones (VI), mide errores en una tarea (VD), asigna grupos comparables y controla tiempo y dificultad. Describe la medida y contempla una lectura alternativa de los datos."], ["T2", "Propón un estudio de caso y explica en qué se distinguen la fenomenología y la hermenéutica.", "Caso: adaptación de un grupo de ingresantes durante un semestre. Recoge entrevistas y observación. Una lectura fenomenológica se centra en cómo se vive la adaptación. Una hermenéutica interpreta qué significan los relatos dentro de su contexto. Distingue profundidad de generalización."], ["T3", "Caso resuelto. En un estudio de estrés se pide anotar nombre y correo y el profesor advierte que quien se retire perderá puntos. Explica dos problemas y cómo corregirlos.", "1. Voluntariedad y retiro (art. 57 a–b): quitar la penalización y ofrecer una alternativa académica equivalente. 2. Anonimato de las respuestas (art. 60): evitar identificadores cuando no sean necesarios. Si se necesita seguimiento, separar el contacto de las respuestas, limitar accesos y explicar el tratamiento. Cierra con un consentimiento comprensible y un procedimiento claro para retirarse."], ["T3", "Caso para practicar. El grupo quiere publicar capturas identificables de entrevistas y dejar fuera resultados porque son inesperados. Justifica qué harías.", "Identifica dos riesgos: identificación de participantes y sesgo al comunicar resultados. Aplica arts. 60 y 62. Publica resultados agregados o fragmentos anonimizados, conserva hallazgos inesperados con contexto y limita el acceso a los registros originales. Señala que una cita puede identificar incluso sin nombre si contiene detalles únicos."], ["T3", "Compara la protección ética en investigación con humanos y animales. Da un ejemplo de cómo mejorar el diseño en cada caso.", "En humanos, explica propósito y riesgos, solicita participación libre, permite retirarse y protege las respuestas. En animales, aplica el marco complementario de reemplazo, reducción y refinamiento: usa una alternativa válida si existe o mejora las condiciones para minimizar sufrimiento. En ambos justifica la necesidad y el balance de riesgos."], ["T3", "Un colegio pide un informe psicológico para ayudar a un menor. ¿Cómo razonarías antes de compartir información?", "Identifica quién pide qué, para qué y cuál es su autoridad o autorización. El secreto profesional es la regla (arts. 142–144). El art. 145 b contempla informes destinados a la mejor solución para el menor. Evalúa el supuesto, comparte solo lo pertinente por un canal apropiado y documenta la decisión."], ["T4", "Compare la neuropsicología clínica con la psicología de la salud y la psiconeuroinmunología: qué estudia cada una y dé un ejemplo de aplicación.", "La neuropsicología clínica integra la neurociencia y la evaluación clínica para estudiar las relaciones entre las estructuras cerebrales y los procesos cognitivos y conductuales. Se aplica en el diagnóstico y la rehabilitación holística de pacientes con daño cerebral adquirido (traumatismo craneoencefálico y accidente cerebrovascular), enfermedades neurodegenerativas como el Alzheimer y el Parkinson, y problemas del neurodesarrollo; por ejemplo, rehabilitar la memoria de alguien que tuvo un ACV. La psicología de la salud es el conjunto de aportes educativos, científicos y profesionales para promover la salud, prevenir enfermedades físicas y estudiar la etiología conductual de las dolencias crónicas; por ejemplo, un programa para dejar de fumar. Dentro de ella, la psiconeuroinmunología, con Robert Ader y Nicholas Cohen, demostró la interacción directa entre el estrés psicológico, el sistema nervioso, el endocrino y la respuesta inmunológica: ante estados afectivos negativos disminuyen las defensas. Es la base del modelo biopsicosocial: la mente y el cuerpo no se separan."], ["T4", "Explique la psicología forense y la psicología positiva: qué son, qué hace cada una y en qué se diferencian de la psicología clínica tradicional.", "La psicología forense y jurídica es la especialidad que actúa como interfaz entre la psicología y el derecho. Su rol principal es el peritaje psicológico en tribunales: evaluación de la imputabilidad penal, custodia de menores, validez del testimonio y evaluación de víctimas y secuelas traumáticas. A diferencia del psicólogo clínico, el forense auxilia al juez con un informe imparcial; no realiza terapia ni defensa legal. La psicología positiva representa un giro epistémico desde el modelo exclusivamente centrado en la patología hacia el estudio científico de las fortalezas humanas, el optimismo, la resiliencia, el flujo (flow) y las comunidades florecientes. Sus intervenciones se centran en el bienestar y en fortalecer lo mejor de las personas. Su modelo PERMA resume el bienestar en emociones positivas, compromiso, relaciones positivas, sentido y logro. Mientras la clínica tradicional se pregunta qué está mal y cómo curarlo, la positiva se pregunta qué hace que una vida florezca."], ["T4", "Distingue clínica, social, educativa y organizacional. Usa un caso corto de cada área y explica tu criterio.", "Clínica: evaluar malestar individual y planificar intervención. Social: explicar cómo la norma del grupo cambia decisiones. Educativa: adaptar estrategias para mejorar comprensión lectora. Organizacional: diagnosticar rotación, clima o liderazgo en un equipo. La clasificación depende de la pregunta y el objetivo de la intervención."], ["T4", "Una escuela reporta problemas de lectura, exclusión por el grupo y ansiedad persistente en una estudiante. Distingue tres áreas implicadas.", "Educativa: identifica barreras y adapta la enseñanza de lectura. Social: estudia las normas y dinámicas que mantienen exclusión. Clínica: evalúa el malestar y la ansiedad de la estudiante con procedimientos apropiados. Un mismo entorno puede requerir colaboración entre varias especialidades."]]};
+  var PREF = "repaso-psico3-completo-2026-";
+  var $ = function (s) { return document.querySelector(s); };
+  function guardar(k, v) { try { localStorage.setItem(PREF + k, JSON.stringify(v)); } catch (e) {} }
+  function leer(k, d) { try { var v = localStorage.getItem(PREF + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function barajar(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  var NOMBRE = {}; D.temas.forEach(function (t) { NOMBRE[t[0]] = t[1]; });
+  var LETRAS = "abcdefghijklmnopqrstuvwxyz";
+  // marcas de fuente (📑, 📖, "(Dato extra)") como etiquetas legibles
+  function rico(texto) {
+    var frag = document.createDocumentFragment();
+    texto.split(/(📑|📖|\(Dato extra\))/).forEach(function (p) {
+      if (!p) return;
+      if (p === "📑") frag.appendChild(el("span", "chip lam", "Lámina"));
+      else if (p === "📖") frag.appendChild(el("span", "chip lib", "Código"));
+      else if (p === "(Dato extra)") frag.appendChild(el("span", "chip ext", "Dato extra"));
+      else frag.appendChild(document.createTextNode(p.replace(/^\s+/, "")));
+    });
+    return frag;
+  }
+  function llenarTemas(sel, todos) {
+    sel.appendChild(new Option(todos || "Todos los temas", ""));
+    D.temas.forEach(function (t) { sel.appendChild(new Option(t[1], t[0])); });
+    sel.value = leer("filtro-" + sel.id, "");
+    if (sel.selectedIndex < 0) sel.value = "";
+    sel.addEventListener("change", function () { guardar("filtro-" + sel.id, sel.value); });
+  }
+
+  $("#cuenta").textContent = "Parcial escrito · miércoles 25 de noviembre";
+
+  // pestañas
+  var tabs = [].slice.call(document.querySelectorAll(".tabs button"));
+  function abrir(id) {
+    if (!document.getElementById(id)) id = "tarjetas";
+    tabs.forEach(function (x) { x.setAttribute("aria-selected", String(x.dataset.t === id)); });
+    [].slice.call(document.querySelectorAll("section[role=tabpanel]")).forEach(function (s) { s.hidden = s.id !== id; });
+    guardar("pestana", id);
+  }
+  tabs.forEach(function (b) { b.addEventListener("click", function () { abrir(b.dataset.t); }); });
+  document.querySelectorAll("[data-study-start]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      document.querySelector('[data-t="' + button.dataset.studyStart + '"]').click();
+      document.querySelector('[data-t="' + button.dataset.studyStart + '"]').focus();
+    });
+  });
+  abrir(leer("pestana", "plan"));
+
+  // ---------- tarjetas ----------
+  llenarTemas($("#f-tema"));
+  var marcas = leer("marcas", {}), mazo = [], idx = 0, volteada = false;
+  function actual() { return mazo.length ? D.tarjetas[mazo[idx % mazo.length]] : null; }
+  function armarMazo() {
+    var f = $("#f-tema").value, solo = $("#f-pend").checked;
+    mazo = barajar(D.tarjetas.map(function (x, i) { return i; }).filter(function (i) { return (!f || D.tarjetas[i][0] === f) && (!solo || marcas[D.tarjetas[i][1]] !== "si"); }));
+    idx = 0; volteada = false; pintar();
+  }
+  function pintar() {
+    var box = $("#tarjeta"); box.innerHTML = "";
+    var sabidas = D.tarjetas.filter(function (c) { return marcas[c[1]] === "si"; }).length;
+    $("#t-prog").textContent = "Dominas " + sabidas + " de " + D.tarjetas.length + " tarjetas.";
+    $("#t-barra").style.width = (sabidas / D.tarjetas.length * 100) + "%";
+    var c = actual();
+    if (!c) { box.appendChild(el("div", "vacio", "No quedan tarjetas en este filtro. Cambia el tema o desmarca “solo las que no domino”.")); return; }
+    var w = el("div", "cara");
+    w.appendChild(el("div", "tema", NOMBRE[c[0]]));
+    if (!volteada) { w.appendChild(el("div", "termino", c[1])); w.appendChild(el("div", "pista", "Toca para ver la respuesta")); }
+    else { w.appendChild(el("div", "termino chico", c[1])); var d = el("div", "def"); d.appendChild(rico(c[2])); w.appendChild(d); }
+    box.appendChild(w);
+    box.setAttribute("aria-label", volteada ? "Respuesta visible; toca para volver al término" : "Tarjeta: toca para ver la respuesta");
+  }
+  function voltear() { if (!mazo.length) return; volteada = !volteada; pintar(); }
+  function marcar(v) {
+    var c = actual(); if (!c) return;
+    marcas[c[1]] = v; guardar("marcas", marcas);
+    if ($("#f-pend").checked && v === "si") { mazo.splice(idx % mazo.length, 1); if (mazo.length) idx = idx % mazo.length; }
+    else idx++;
+    volteada = false; pintar();
+  }
+  $("#tarjeta").addEventListener("click", voltear);
+  $("#tarjeta").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); voltear(); } });
+  $("#t-si").addEventListener("click", function () { marcar("si"); });
+  $("#t-no").addEventListener("click", function () { marcar("no"); });
+  $("#t-sig").addEventListener("click", function () { idx++; volteada = false; pintar(); });
+  $("#f-tema").addEventListener("change", armarMazo); $("#f-pend").addEventListener("change", armarMazo);
+  armarMazo();
+
+  // ---------- selección simple ----------
+  llenarTemas($("#s-tema-f"));
+  var resS = leer("seleccion", {});
+  function tarjetaSeleccion(p, n, alResponder) {
+    var c = el("article", "card");
+    c.appendChild(el("div", "tema", NOMBRE[p[0]]));
+    c.appendChild(el("p", "q", n + ". " + p[1]));
+    var ops = el("div", "opciones"), fb = el("div", "a"); fb.hidden = true;
+    var botones = p[2].map(function (txt, i) {
+      var b = el("button", "op"); b.type = "button"; b.setAttribute("aria-pressed", "false");
+      b.appendChild(el("b", null, LETRAS[i] + ")")); b.appendChild(el("span", null, txt));
+      b.onclick = function () {
+        botones.forEach(function (x, j) { x.disabled = true; if (j === p[3]) x.classList.add("bien"); });
+        var bien = i === p[3];
+        if (!bien) b.classList.add("mal");
+        b.setAttribute("aria-pressed", "true");
+        fb.hidden = false; fb.innerHTML = "";
+        fb.appendChild(el("div", bien ? "res-ok" : "res-bad", bien ? "Correcto" : "Incorrecto: la respuesta es la " + LETRAS[p[3]] + ")"));
+        fb.appendChild(el("div", null, p[4]));
+        alResponder(bien);
+      };
+      ops.appendChild(b); return b;
+    });
+    c.appendChild(ops); c.appendChild(fb);
+    return c;
+  }
+  function listarS() {
+    var f = $("#s-tema-f").value, solo = $("#s-pend").checked, box = $("#s-lista"), n = 0, bien = 0, hechas = 0; box.innerHTML = "";
+    D.seleccion.forEach(function (p, i) {
+      if (f && p[0] !== f) return;
+      if (resS[p[1]]) { hechas++; if (resS[p[1]] === "si") bien++; }
+      if (solo && resS[p[1]] === "si") return;
+      n++;
+      box.appendChild(tarjetaSeleccion(p, i + 1, function (ok) { resS[p[1]] = ok ? "si" : "no"; guardar("seleccion", resS); progS(); }));
+    });
+    if (!n) box.appendChild(el("p", "nota", "No quedan preguntas en este filtro."));
+    progS();
+  }
+  function progS() {
+    var f = $("#s-tema-f").value, tot = 0, bien = 0;
+    D.seleccion.forEach(function (p) { if (f && p[0] !== f) return; tot++; if (resS[p[1]] === "si") bien++; });
+    $("#s-prog").textContent = "Acertadas: " + bien + " de " + tot + " en este filtro.";
+  }
+  $("#s-tema-f").addEventListener("change", listarS); $("#s-pend").addEventListener("change", listarS); listarS();
+
+  // ---------- verdadero o falso ----------
+  llenarTemas($("#v-tema-f"));
+  var resV = leer("vf", {});
+  function tarjetaVF(p, n, alResponder) {
+    var c = el("article", "card");
+    c.appendChild(el("div", "tema", NOMBRE[p[0]]));
+    c.appendChild(el("p", "q", n + ". " + p[1]));
+    var fila = el("div", "vf"), fb = el("div", "a"); fb.hidden = true;
+    [["V", true], ["F", false]].forEach(function (o) {
+      var b = el("button", "btn", o[0]); b.type = "button"; b.setAttribute("aria-label", o[1] ? "Verdadero" : "Falso");
+      b.onclick = function () {
+        [].slice.call(fila.children).forEach(function (x) { x.disabled = true; });
+        var bien = o[1] === p[2];
+        b.classList.add(bien ? "ok" : "bad");
+        fb.hidden = false; fb.innerHTML = "";
+        fb.appendChild(el("div", bien ? "res-ok" : "res-bad", (bien ? "Correcto: es " : "Incorrecto: es ") + (p[2] ? "verdadera" : "falsa")));
+        fb.appendChild(el("div", null, p[3]));
+        alResponder(bien);
+      };
+      fila.appendChild(b);
+    });
+    c.appendChild(fila); c.appendChild(fb);
+    return c;
+  }
+  function listarV() {
+    var f = $("#v-tema-f").value, solo = $("#v-pend").checked, box = $("#v-lista"), n = 0; box.innerHTML = "";
+    D.vf.forEach(function (p, i) {
+      if (f && p[0] !== f) return;
+      if (solo && resV[p[1]] === "si") return;
+      n++;
+      box.appendChild(tarjetaVF(p, i + 1, function (ok) { resV[p[1]] = ok ? "si" : "no"; guardar("vf", resV); progV(); }));
+    });
+    if (!n) box.appendChild(el("p", "nota", "No quedan afirmaciones en este filtro."));
+    progV();
+  }
+  function progV() {
+    var f = $("#v-tema-f").value, tot = 0, bien = 0;
+    D.vf.forEach(function (p) { if (f && p[0] !== f) return; tot++; if (resV[p[1]] === "si") bien++; });
+    $("#v-prog").textContent = "Acertadas: " + bien + " de " + tot + " en este filtro.";
+  }
+  $("#v-tema-f").addEventListener("change", listarV); $("#v-pend").addEventListener("change", listarV); listarV();
+
+  // ---------- pareo ----------
+  var pSel = $("#p-set");
+  pSel.appendChild(new Option("Mezclado (10 de todos los temas)", "mix"));
+  D.pareos.forEach(function (p, i) { pSel.appendChild(new Option(NOMBRE[p[0]].split(" · ")[0] + " · " + p[1], String(i))); });
+  function paresDe(valor, cuantos) {
+    if (valor !== "mix") return D.pareos[+valor][2].slice();
+    var todos = []; D.pareos.forEach(function (p) { p[2].forEach(function (x) { todos.push(x); }); });
+    return barajar(todos).slice(0, cuantos || 10);
+  }
+  // dibuja un pareo; devuelve una función que corrige y dice cuántos acertó
+  function dibujarPareo(caja, pares, conBoton) {
+    caja.innerHTML = "";
+    var orden = barajar(pares.map(function (x, i) { return i; }));
+    caja.appendChild(el("p", "nota", "Escribe en cada definición la letra del concepto que corresponde."));
+    var lista = el("div", "lista-terminos");
+    pares.forEach(function (x, i) { lista.appendChild(el("div", null, LETRAS[i].toUpperCase() + ". " + x[0])); });
+    caja.appendChild(lista);
+    var cont = el("div", "pareo"); cont.style.marginTop = "10px";
+    var filas = orden.map(function (i, k) {
+      var f = el("div", "fila-p"), txt = el("span", null, (k + 1) + ". " + pares[i][1]), s = el("select");
+      s.setAttribute("aria-label", "Letra para la definición " + (k + 1));
+      s.appendChild(new Option("—", ""));
+      pares.forEach(function (x, j) { s.appendChild(new Option(LETRAS[j].toUpperCase(), String(j))); });
+      f.appendChild(txt); f.appendChild(s); cont.appendChild(f);
+      return { f: f, s: s, i: i };
+    });
+    caja.appendChild(cont);
+    function corregir() {
+      var bien = 0;
+      filas.forEach(function (r) {
+        var ok = r.s.value === String(r.i); if (ok) bien++;
+        r.f.classList.remove("bien", "mal"); r.f.classList.add(ok ? "bien" : "mal"); r.s.disabled = true;
+        if (!ok) r.f.appendChild(el("span", "nota", "Era la " + LETRAS[r.i].toUpperCase()));
+      });
+      return bien;
+    }
+    if (conBoton) {
+      var b = el("button", "btn prim", "Revisar"), r = el("p", "q"); b.type = "button"; b.style.marginTop = "10px";
+      b.onclick = function () { var n = corregir(); r.textContent = "Acertaste " + n + " de " + filas.length + "."; b.disabled = true; };
+      caja.appendChild(b); caja.appendChild(r);
+    }
+    return corregir;
+  }
+  function nuevoPareo() { dibujarPareo($("#p-caja"), paresDe(pSel.value), true); }
+  pSel.addEventListener("change", nuevoPareo); $("#p-otro").addEventListener("click", nuevoPareo); nuevoPareo();
+
+  // ---------- desarrollo ----------
+  llenarTemas($("#d-tema-f"));
+  var resD = leer("desarrollo", {}), borr = leer("borradores", {});
+  function listarD() {
+    var f = $("#d-tema-f").value, box = $("#d-lista"); box.innerHTML = "";
+    D.desarrollo.forEach(function (p, i) {
+      if (f && p[0] !== f) return;
+      var c = el("article", "card"), cab = el("div", "tema", NOMBRE[p[0]] + " ");
+      if (resD[p[1]]) cab.appendChild(el("span", "chip " + (resD[p[1]] === "si" ? "okc" : "badc"), resD[p[1]] === "si" ? "La tenía" : "Me faltó"));
+      c.appendChild(cab);
+      c.appendChild(el("p", "q", (i + 1) + ". " + p[1]));
+      var ta = el("textarea"); ta.id = "d-r" + i; ta.setAttribute("aria-label", "Tu respuesta a la pregunta " + (i + 1)); ta.value = borr[p[1]] || "";
+      ta.addEventListener("input", function () { borr[p[1]] = ta.value; guardar("borradores", borr); });
+      var b = el("button", "btn", "Ver respuesta modelo"), a = el("div", "a", p[2]), fila = el("div", "fila");
+      b.type = "button"; a.hidden = true; fila.hidden = true;
+      var bs = el("button", "btn ok", "La tenía completa"), bn = el("button", "btn bad", "Me faltó"); bs.type = "button"; bn.type = "button";
+      bs.onclick = function () { resD[p[1]] = "si"; guardar("desarrollo", resD); listarD(); };
+      bn.onclick = function () { resD[p[1]] = "no"; guardar("desarrollo", resD); listarD(); };
+      fila.appendChild(bs); fila.appendChild(bn);
+      b.onclick = function () { a.hidden = false; fila.hidden = false; b.hidden = true; };
+      c.appendChild(ta); c.appendChild(b); c.appendChild(a); c.appendChild(fila); box.appendChild(c);
+    });
+  }
+  $("#d-tema-f").addEventListener("change", listarD); listarD();
+
+  // ---------- simulacro ----------
+  llenarTemas($("#m-tema"), "Todos los temas (el parcial completo)");
+  var reloj = null, fin = 0, examen = null;
+  function tic() {
+    var s = Math.max(0, Math.round((fin - Date.now()) / 1000));
+    $("#m-reloj").textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+    if (!s) corregirExamen();
+  }
+  function del(lista, f) { return lista.filter(function (p) { return !f || p[0] === f; }); }
+  function escoger(lista, tema, cantidad) {
+    if (tema) return barajar(del(lista, tema)).slice(0, cantidad);
+    var elegidas = [];
+    var cuota = Math.floor(cantidad / D.temas.length);
+    D.temas.forEach(function (t) {
+      elegidas = elegidas.concat(barajar(del(lista, t[0])).slice(0, cuota));
+    });
+    return barajar(elegidas.concat(barajar(lista.filter(function (p) {
+      return elegidas.indexOf(p) < 0;
+    })).slice(0, cantidad - elegidas.length)));
+  }
+  $("#m-empezar").addEventListener("click", function () {
+    var f = $("#m-tema").value;
+    var sel = escoger(D.seleccion, f, 10), vfs = escoger(D.vf, f, 10), des = escoger(D.desarrollo, f, 2);
+    var candidatos = []; D.pareos.forEach(function (p) { p[2].forEach(function (x) { candidatos.push([p[0], x]); }); });
+    var usados = new Set();
+    candidatos = candidatos.filter(function (p) {
+      var clave = p[0] + "|" + p[1][0].toLocaleLowerCase("es");
+      if (usados.has(clave)) return false;
+      usados.add(clave); return true;
+    });
+    var pares = escoger(candidatos, f, 10).map(function (p) { return p[1]; });
+    var box = $("#m-preg"); box.innerHTML = "";
+    examen = { sel: [], vf: [], des: [], pareo: null, nPares: pares.length };
+    box.appendChild(el("p", "parte", "I. Selección simple (0,75 c/u)"));
+    sel.forEach(function (p, k) {
+      var c = el("div", "card"); c.appendChild(el("p", "q", (k + 1) + ". " + p[1]));
+      var ops = el("div", "opciones"), reg = { p: p, elegida: -1, botones: [] };
+      p[2].forEach(function (txt, i) {
+        var b = el("button", "op"); b.type = "button"; b.setAttribute("aria-pressed", "false");
+        b.appendChild(el("b", null, LETRAS[i] + ")")); b.appendChild(el("span", null, txt));
+        b.onclick = function () { reg.elegida = i; reg.botones.forEach(function (x, j) { x.setAttribute("aria-pressed", String(j === i)); }); };
+        reg.botones.push(b); ops.appendChild(b);
+      });
+      c.appendChild(ops); box.appendChild(c); examen.sel.push(reg);
+    });
+    box.appendChild(el("p", "parte", "II. Verdadero o falso (0,25 c/u)"));
+    vfs.forEach(function (p, k) {
+      var c = el("div", "card"); c.appendChild(el("p", "q", (k + 1) + ". " + p[1]));
+      var fila = el("div", "vf"), reg = { p: p, elegida: null, botones: [] };
+      [["V", true], ["F", false]].forEach(function (o) {
+        var b = el("button", "btn", o[0]); b.type = "button"; b.setAttribute("aria-pressed", "false");
+        b.onclick = function () { reg.elegida = o[1]; reg.botones.forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); x.classList.toggle("prim", x === b); }); };
+        reg.botones.push(b); fila.appendChild(b);
+      });
+      c.appendChild(fila); box.appendChild(c); examen.vf.push(reg);
+    });
+    box.appendChild(el("p", "parte", "III. Pareo (0,25 c/u)"));
+    var cp = el("div", "card"); box.appendChild(cp);
+    examen.pareo = dibujarPareo(cp, pares, false);
+    box.appendChild(el("p", "parte", "IV. Desarrollo breve (3,75 c/u)"));
+    des.forEach(function (p, k) {
+      var c = el("div", "card"), lab = el("label", "q", (k + 1) + ". " + p[1]), ta = el("textarea");
+      ta.id = "m-d" + k; lab.htmlFor = ta.id; c.appendChild(lab); c.appendChild(ta); box.appendChild(c);
+      examen.des.push({ p: p, ta: ta });
+    });
+    $("#m-inicio").hidden = true; $("#m-examen").hidden = false; $("#m-result").hidden = true;
+    fin = Date.now() + (+$("#m-min").value) * 60000; clearInterval(reloj); tic(); reloj = setInterval(tic, 500);
+    window.scrollTo(0, 0);
+  });
+  function fmt(x) { return (Math.round(x * 100) / 100).toString().replace(".", ","); }
+  function corregirExamen() {
+    if (!examen) return;
+    clearInterval(reloj);
+    var res = $("#m-result"); res.innerHTML = ""; res.hidden = false;
+    var ptsSel = 0, ptsVF = 0;
+    examen.sel.forEach(function (r) {
+      var bien = r.elegida === r.p[3]; if (bien) ptsSel += 0.75;
+      r.botones.forEach(function (b, j) { b.disabled = true; if (j === r.p[3]) b.classList.add("bien"); else if (j === r.elegida) b.classList.add("mal"); });
+      var a = el("div", "a"); a.appendChild(el("div", bien ? "res-ok" : "res-bad", bien ? "Correcto" : "Era la " + LETRAS[r.p[3]] + ")")); a.appendChild(el("div", null, r.p[4]));
+      r.botones[0].parentNode.parentNode.appendChild(a);
+    });
+    examen.vf.forEach(function (r) {
+      var bien = r.elegida === r.p[2]; if (bien) ptsVF += 0.25;
+      r.botones.forEach(function (b) { b.disabled = true; });
+      var a = el("div", "a"); a.appendChild(el("div", bien ? "res-ok" : "res-bad", (bien ? "Correcto: " : "Incorrecto: ") + (r.p[2] ? "verdadera" : "falsa"))); a.appendChild(el("div", null, r.p[3]));
+      r.botones[0].parentNode.parentNode.appendChild(a);
+    });
+    var ptsPareo = examen.pareo() * 0.25;
+    var ptsDes = [0, 0];
+    examen.des.forEach(function (r, k) {
+      r.ta.disabled = true;
+      var c = r.ta.parentNode, a = el("div", "a", r.p[2]);
+      c.appendChild(el("p", "nota", "Respuesta modelo:")); c.appendChild(a);
+      var lab = el("label", "nota", "¿Cuánto te pondrías? "), s = el("select"); s.id = "m-nota" + k; lab.htmlFor = s.id;
+      [["0", "0"], ["1", "1"], ["1.5", "1,5"], ["2", "2"], ["2.5", "2,5"], ["3", "3"], ["3.75", "3,75"]].forEach(function (o) { s.appendChild(new Option(o[1], o[0])); });
+      s.onchange = function () { ptsDes[k] = +s.value; total(); };
+      lab.appendChild(s); c.appendChild(lab);
+    });
+    var cab = el("div", "card"), tot = el("p", "total"), det = el("p", "nota");
+    function total() {
+      var t = ptsSel + ptsVF + ptsPareo + ptsDes[0] + ptsDes[1];
+      tot.textContent = fmt(t) + " / 20";
+      det.textContent = "Selección " + fmt(ptsSel) + " / 7,5 · V o F " + fmt(ptsVF) + " / 2,5 · Pareo " + fmt(ptsPareo) + " / 2,5 · Desarrollo " + fmt(ptsDes[0] + ptsDes[1]) + " / 7,5 (ponte tu nota en cada pregunta de desarrollo, comparando con la respuesta modelo).";
+    }
+    cab.appendChild(el("p", "q", "Tu nota")); cab.appendChild(tot); cab.appendChild(det); total();
+    var otra = el("button", "btn prim", "Hacer otro simulacro"); otra.type = "button";
+    otra.onclick = function () { $("#m-inicio").hidden = false; $("#m-examen").hidden = true; res.hidden = true; examen = null; window.scrollTo(0, 0); };
+    res.appendChild(cab); res.appendChild(otra);
+    $("#m-terminar").disabled = true;
+    $("#m-examen").insertBefore(res, $("#m-examen").firstChild);
+    res.hidden = false; window.scrollTo(0, 0);
+  }
+  $("#m-terminar").addEventListener("click", function () { corregirExamen(); });
+  $("#m-empezar").addEventListener("click", function () { $("#m-terminar").disabled = false; });
+})();
+</script>
+</body>
+</html>
